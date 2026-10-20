@@ -5,7 +5,7 @@ enum AppConfig {
     /// 后端 API 地址（不带结尾斜杠）。
     /// 本地联调：模拟器直接用 localhost；真机调试改成开发机局域网 IP，如 http://192.168.1.10:3000。
     /// 上线时改为正式域名，如 https://api.example.com。
-    static let apiBaseURL = URL(string: "http://localhost:3000")!
+    static let apiBaseURL = URL(string: "https://chengyu-backend.onrender.com")!
     static let apiPrefix = "/api/v1"
 
     /// App Group：App 与小组件共享数据的容器，两个 Target 的 entitlements 必须一致

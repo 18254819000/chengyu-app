@@ -1,5 +1,6 @@
 // 后端接口封装：统一带 JWT，401 时跳登录页
-const BASE = '/api/v1';
+// 生产构建通过 VITE_API_BASE_URL 注入线上后端地址；本地开发不设则走 vite 代理 /api/v1
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL || '/api/v1';
 
 export function getToken(): string {
   return localStorage.getItem('chengyu_token') || '';
