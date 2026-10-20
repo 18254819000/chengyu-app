@@ -8,6 +8,7 @@
         <el-menu-item index="/import">批量导入</el-menu-item>
         <el-menu-item index="/daily">每日轮换预览</el-menu-item>
         <el-menu-item index="/config">参数配置</el-menu-item>
+        <el-menu-item index="/pages">协议与政策</el-menu-item>
       </el-menu>
       <div class="aside-foot">
         <el-button text @click="logout">退出登录</el-button>

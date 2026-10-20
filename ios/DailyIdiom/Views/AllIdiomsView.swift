@@ -22,9 +22,9 @@ struct AllIdiomsView: View {
             }
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("全部成语")
+        .navigationTitle("All Idioms")
         .navigationBarTitleDisplayMode(.large)
-        .searchable(text: $query, prompt: "搜索成语或拼音")
+        .searchable(text: $query, prompt: "Search idioms or pinyin…")
         .onChange(of: query) { newValue in
             scheduleSearch(newValue)
         }
@@ -59,7 +59,7 @@ struct AllIdiomsView: View {
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(item.locked ? .ink2 : .ink)
                     if state.newIdiomIds.contains(item.id) {
-                        Text("新")
+                        Text("NEW")
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 5)
@@ -90,17 +90,17 @@ struct AllIdiomsView: View {
     /// 搜索无结果必须有明确提示与清空入口（需求 F3）
     private var emptySearchState: some View {
         VStack(spacing: 0) {
-            Text("未找到相关成语")
+            Text("No idioms found")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.ink)
                 .padding(.top, 64)
-            Text("检查一下输入，或换个关键词试试\n也可以按拼音搜索，如 shou zhu")
+            Text("Check your spelling or try another keyword.\nYou can also search by pinyin, e.g. shou zhu")
                 .font(.system(size: 13))
                 .foregroundColor(.ink3)
                 .multilineTextAlignment(.center)
                 .lineSpacing(6)
                 .padding(.top, 8)
-            Button("清空搜索") {
+            Button("Clear Search") {
                 query = ""
             }
             .font(.system(size: 13.5))

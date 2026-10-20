@@ -81,6 +81,22 @@ async function main() {
     count++;
   }
   console.log(`成语已导入并发布：${count} 条`);
+
+  // 4) 协议与政策初稿（仅当该 key 不存在时写入；已存在绝不覆盖管理员的后续编辑）
+  const contentDir = join(__dirname, 'content');
+  const pageSeeds = [
+    { key: 'privacy', title: 'Privacy Policy', file: 'privacy.md' },
+    { key: 'terms', title: 'Terms of Use', file: 'terms.md' },
+  ];
+  for (const p of pageSeeds) {
+    const existing = await prisma.contentPage.findUnique({ where: { key: p.key } });
+    if (!existing) {
+      const content = readFileSync(join(contentDir, p.file), 'utf8');
+      await prisma.contentPage.create({ data: { key: p.key, title: p.title, content } });
+      console.log(`内容页初稿已写入：${p.key}`);
+    }
+  }
+  console.log('内容页已就绪（已存在的未覆盖）');
 }
 
 main()

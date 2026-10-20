@@ -8,6 +8,9 @@ import { AdminDailyController } from './app-api/admin-daily.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { AppleService } from './subscription/apple.service';
 import { SubscriptionController } from './subscription/subscription.controller';
+import { AdminPagesController } from './pages/admin-pages.controller';
+import { PagesController } from './pages/pages.controller';
+import { PagesService } from './pages/pages.service';
 
 @Module({
   controllers: [
@@ -17,7 +20,9 @@ import { SubscriptionController } from './subscription/subscription.controller';
     AdminDailyController,
     AppController,
     SubscriptionController,
+    AdminPagesController,
+    PagesController,
   ],
-  providers: [PrismaService, AppConfigService, AppleService],
+  providers: [PrismaService, AppConfigService, AppleService, PagesService],
 })
 export class AppModule {}

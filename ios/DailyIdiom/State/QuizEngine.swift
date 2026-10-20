@@ -10,22 +10,22 @@ enum QuizDifficulty: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .easy: return "简单"
-        case .medium: return "中等"
-        case .hard: return "困难"
+        case .easy: return "Easy"
+        case .medium: return "Medium"
+        case .hard: return "Hard"
         }
     }
 
     var subtitle: String {
         switch self {
-        case .easy: return "看成语，选英文释义"
-        case .medium: return "看英文释义，选成语"
-        case .hard: return "看中文例句，选成语"
+        case .easy: return "Read the idiom, choose the English meaning"
+        case .medium: return "Read the English meaning, choose the idiom"
+        case .hard: return "Read the Chinese example, choose the idiom"
         }
     }
 
-    /// App 内难度标签文案，如「中等难度」
-    var tagText: String { title + "难度" }
+    /// App 内难度标签文案
+    var tagText: String { title }
 
     /// 英文难度名（英文成绩分享卡用）
     var englishTitle: String {

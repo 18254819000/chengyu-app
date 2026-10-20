@@ -12,36 +12,36 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 subscriptionRow
                 rowDivider
-                actionRow("恢复购买", trailing: store.isRestoring ? "恢复中…" : nil) {
+                actionRow("Restore Purchases", trailing: store.isRestoring ? "Restoring…" : nil) {
                     Task { await store.restorePurchases() }
                 }
                 rowDivider
-                actionRow("管理订阅") {
+                actionRow("Manage Subscription") {
                     openManageSubscriptions()
                 }
                 rowDivider
                 NavigationLink {
                     WidgetGuideView()
                 } label: {
-                    rowLabel("把小组件加到桌面", trailing: nil)
+                    rowLabel("Add Widget to Home Screen", trailing: nil)
                 }
                 rowDivider
-                actionRow("隐私政策") {
+                actionRow("Privacy Policy") {
                     openURL(AppConfig.privacyPolicyURL)
                 }
                 rowDivider
-                actionRow("用户协议") {
+                actionRow("Terms of Use") {
                     openURL(AppConfig.termsOfUseURL)
                 }
                 rowDivider
-                actionRow("联系客服") {
+                actionRow("Contact Us") {
                     if let url = URL(string: "mailto:\(AppConfig.supportEmail)") {
                         openURL(url)
                     }
                 }
                 rowDivider
 
-                Text("Daily Chengyu 版本 \(AppConfig.appVersion)")
+                Text("Daily Chengyu · Version \(AppConfig.appVersion)")
                     .font(.system(size: 12))
                     .foregroundColor(.ink3)
                     .tracking(1)
@@ -51,8 +51,8 @@ struct SettingsView: View {
             .padding(.top, 6)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .alert("提示", isPresented: messageBinding) {
-            Button("知道了") { store.message = nil }
+        .alert("Notice", isPresented: messageBinding) {
+            Button("OK") { store.message = nil }
         } message: {
             Text(store.message ?? "")
         }
@@ -76,7 +76,7 @@ struct SettingsView: View {
             }
         } label: {
             HStack {
-                Text("我的订阅")
+                Text("My Subscription")
                     .font(.system(size: 15))
                     .foregroundColor(.ink)
                 Spacer()
@@ -95,14 +95,14 @@ struct SettingsView: View {
     }
 
     private var subscriptionStatusText: String {
-        guard state.isEntitled else { return "未订阅 · 去订阅" }
+        guard state.isEntitled else { return "Not Subscribed · Subscribe" }
         if let date = state.entitlement?.expiresDate {
             let f = DateFormatter()
-            f.locale = Locale(identifier: "zh_CN")
-            f.dateFormat = "yyyy年M月d日"
-            return "订阅中 · 到期 \(f.string(from: date))"
+            f.locale = Locale(identifier: "en_US")
+            f.dateFormat = "MMM d, yyyy"
+            return "Subscribed · Expires \(f.string(from: date))"
         }
-        return "订阅中"
+        return "Subscribed"
     }
 
     // MARK: 通用行

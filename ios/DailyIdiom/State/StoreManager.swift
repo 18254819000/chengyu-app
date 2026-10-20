@@ -60,16 +60,16 @@ final class StoreManager: ObservableObject {
     func trialDescription(for product: Product) -> String? {
         guard let offer = product.subscription?.introductoryOffer,
               offer.paymentMode == .freeTrial else { return nil }
-        return "免费试用 \(offer.period.value) \(unitText(offer.period.unit))"
+        return "\(offer.period.value)-\(unitText(offer.period.unit)) free trial"
     }
 
     private func unitText(_ unit: Product.SubscriptionPeriod.Unit) -> String {
         switch unit {
-        case .day: return "天"
-        case .week: return "周"
-        case .month: return "个月"
-        case .year: return "年"
-        @unknown default: return "天"
+        case .day: return "day"
+        case .week: return "week"
+        case .month: return "month"
+        case .year: return "year"
+        @unknown default: return "day"
         }
     }
 
@@ -85,19 +85,19 @@ final class StoreManager: ObservableObject {
             case .success(let verification):
                 await process(verification)
                 if appState?.isEntitled == true {
-                    message = "订阅成功，全部成语已解锁"
+                    message = "Subscribed! All idioms are now unlocked."
                 } else {
-                    message = "购买已完成，权益正在确认中，请稍候片刻"
+                    message = "Purchase complete. Your access is being confirmed — just a moment."
                 }
             case .userCancelled:
-                message = "已取消购买"
+                message = "Purchase cancelled."
             case .pending:
-                message = "购买处理中：等待批准完成后将自动解锁"
+                message = "Purchase pending: your idioms will unlock automatically once it's approved."
             @unknown default:
-                message = "购买未完成，请稍后重试"
+                message = "Purchase didn't go through. Please try again later."
             }
         } catch {
-            message = "购买失败：\(error.localizedDescription)"
+            message = "Purchase failed: \(error.localizedDescription)"
         }
     }
 
@@ -109,9 +109,9 @@ final class StoreManager: ObservableObject {
         do {
             try await AppStore.sync()
             await refreshCurrentEntitlements()
-            message = appState?.isEntitled == true ? "已恢复你的订阅" : "未找到可恢复的订阅"
+            message = appState?.isEntitled == true ? "Your subscription has been restored." : "No subscription found to restore."
         } catch {
-            message = "恢复购买失败：\(error.localizedDescription)"
+            message = "Restore failed: \(error.localizedDescription)"
         }
     }
 

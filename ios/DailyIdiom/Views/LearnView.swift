@@ -58,7 +58,7 @@ struct LearnView: View {
     /// 个人中心页（设置内容复用 SettingsView），推入时带系统导航栏与标题
     private var settingsDestination: some View {
         SettingsView()
-            .navigationTitle("个人中心")
+            .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -94,15 +94,15 @@ struct LearnView: View {
             Spacer()
             if state.isSyncing {
                 ProgressView()
-                Text("正在加载成语…")
+                Text("Loading idioms…")
                     .font(.system(size: 14))
                     .foregroundColor(.ink3)
             } else {
-                Text(state.syncError ?? "暂无内容")
+                Text(state.syncError ?? "No content yet")
                     .font(.system(size: 15))
                     .foregroundColor(.ink2)
                     .multilineTextAlignment(.center)
-                Button("重试") {
+                Button("Retry") {
                     Task { await state.sync() }
                 }
                 .font(.system(size: 14, weight: .semibold))

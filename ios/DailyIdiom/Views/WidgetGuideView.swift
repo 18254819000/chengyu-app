@@ -9,21 +9,21 @@ struct WidgetGuideView: View {
                     .padding(.top, 10)
 
                 step(number: 1,
-                     title: "长按桌面空白处",
-                     detail: "在主屏幕上长按任意空白区域，直到 App 图标开始抖动。")
+                     title: "Touch and hold the Home Screen",
+                     detail: "Touch and hold an empty area on your Home Screen until the app icons start to jiggle.")
                 step(number: 2,
-                     title: "点左上角的「+」",
-                     detail: "在小组件列表中向下找到「每日成语」，点它进入。")
+                     title: "Tap the \"+\" button",
+                     detail: "Scroll down the widget list, find \"Daily Chengyu\", and tap it.")
                 step(number: 3,
-                     title: "选择大尺寸并添加",
-                     detail: "左右滑动选到大尺寸，点「添加小组件」，再点「完成」即可。每天打开桌面就能看到一个新的成语。")
+                     title: "Choose the medium size and add it",
+                     detail: "Swipe to the medium size, tap \"Add Widget\", then tap \"Done\". A new idiom will be waiting on your Home Screen every day.")
 
                 Spacer(minLength: 20)
             }
             .padding(.horizontal, 22)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("添加小组件")
+        .navigationTitle("Add the Widget")
         .navigationBarTitleDisplayMode(.inline)
     }
 

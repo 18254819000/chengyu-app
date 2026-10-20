@@ -143,8 +143,8 @@ final class AppState: ObservableObject {
             syncError = nil
         } catch {
             syncError = idioms.isEmpty
-                ? "内容加载失败，请检查网络后重试"
-                : "网络不可用，正在展示已缓存内容"
+                ? "Couldn't load content. Check your connection and try again."
+                : "You're offline. Showing cached content."
             // 断网兜底：用本地缓存与轮换公式定位当日成语，小组件继续用共享缓存
             positionForToday(dailyId: nil)
         }

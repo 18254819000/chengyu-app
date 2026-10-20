@@ -26,7 +26,7 @@ struct QuizView: View {
             }
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("成语测试")
+        .navigationTitle("Chengyu Quiz")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $isSharing) {
             if let shareImage = shareImage {
@@ -43,12 +43,13 @@ struct QuizView: View {
         if easyPool.count < 4 {
             VStack(spacing: 12) {
                 Spacer()
-                Text("内容不足，暂时无法测试")
+                Text("Not Enough Content Yet")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.ink)
-                Text("可用的成语还太少，内容同步完成后再来试试")
+                Text("There aren't enough idioms available for a quiz yet. Please try again once content has finished syncing.")
                     .font(.system(size: 13))
                     .foregroundColor(.ink3)
+                    .multilineTextAlignment(.center)
                 Spacer()
             }
             .frame(maxWidth: .infinity)
@@ -56,7 +57,7 @@ struct QuizView: View {
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("选一个难度，开始挑战")
+                    Text("Choose a difficulty to start")
                         .font(.system(size: 15))
                         .foregroundColor(.ink2)
                         .padding(.top, 26)
@@ -66,7 +67,7 @@ struct QuizView: View {
                             .padding(.top, 16)
                     }
 
-                    Text("每轮 \(min(10, easyPool.count)) 题，答完立即出成绩")
+                    Text("\(min(10, easyPool.count)) questions per round, with your score at the end")
                         .font(.system(size: 12.5))
                         .foregroundColor(.ink3)
                         .padding(.top, 24)
@@ -89,13 +90,13 @@ struct QuizView: View {
                     Text(difficulty.title)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.ink)
-                    Text(available ? difficulty.subtitle : "\(difficulty.subtitle)（题目不足）")
+                    Text(available ? difficulty.subtitle : "\(difficulty.subtitle) (Not enough questions)")
                         .font(.system(size: 13))
                         .foregroundColor(.ink3)
                 }
                 Spacer()
                 if best > 0 {
-                    Text("最佳 \(best) 分")
+                    Text("Best: \(best)")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.accentRed)
                 }
@@ -136,7 +137,7 @@ struct QuizView: View {
                             Button {
                                 engine.advance()
                             } label: {
-                                Text(engine.isLastQuestion ? "查看成绩" : "下一题")
+                                Text(engine.isLastQuestion ? "See Results" : "Next")
                                     .font(.system(size: 15.5, weight: .semibold))
                                     .tracking(1)
                                     .foregroundColor(.white)
@@ -191,7 +192,7 @@ struct QuizView: View {
             subjectHead(question.subject)
         case .medium, .hard:
             VStack(alignment: .leading, spacing: 0) {
-                Text(engine.difficulty == .medium ? "下面这段英文释义，说的是哪个成语？" : "把空格处补上正确的成语")
+                Text(engine.difficulty == .medium ? "Which idiom does this English definition describe?" : "Fill in the blank with the correct idiom")
                     .font(.system(size: 13))
                     .foregroundColor(.ink3)
                 Text(question.promptText ?? "")
@@ -314,23 +315,17 @@ struct QuizView: View {
                     .cornerRadius(999)
                     .padding(.top, 36)
 
-                HStack(alignment: .bottom, spacing: 6) {
-                    Text("\(engine.score)")
-                        .font(.system(size: 88, weight: .bold))
-                        .foregroundColor(.ink)
-                    Text("分")
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundColor(.ink)
-                        .padding(.bottom, 14)
-                }
-                .padding(.top, 22)
+                Text("\(engine.score)")
+                    .font(.system(size: 88, weight: .bold))
+                    .foregroundColor(.ink)
+                    .padding(.top, 22)
 
-                Text("答对 \(engine.correctCount)/\(engine.totalCount) 题 · 用时 \(engine.elapsedSeconds) 秒")
+                Text("\(engine.correctCount)/\(engine.totalCount) correct · \(engine.elapsedSeconds)s")
                     .font(.system(size: 15))
                     .foregroundColor(.ink2)
 
                 if engine.isNewRecord {
-                    Text("新纪录！")
+                    Text("New Record!")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.accentRed)
                         .padding(.top, 12)
@@ -339,7 +334,7 @@ struct QuizView: View {
                 Button {
                     shareScore()
                 } label: {
-                    Text("分享成绩")
+                    Text("Share My Score")
                         .font(.system(size: 15.5, weight: .semibold))
                         .tracking(1)
                         .foregroundColor(.white)
@@ -353,7 +348,7 @@ struct QuizView: View {
                 Button {
                     engine.start(difficulty: engine.difficulty, idioms: state.idioms)
                 } label: {
-                    Text("再来一轮")
+                    Text("Try Again")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.ink)
                         .frame(maxWidth: .infinity)
@@ -368,7 +363,7 @@ struct QuizView: View {
                     engine.reset()
                     state.showQuiz = false
                 } label: {
-                    Text("返回首页")
+                    Text("Back to Home")
                         .font(.system(size: 14.5, weight: .medium))
                         .foregroundColor(.ink2)
                         .padding(.vertical, 10)
@@ -379,7 +374,7 @@ struct QuizView: View {
                     Button {
                         state.showPaywall = true
                     } label: {
-                        Text("订阅解锁全部成语，题库更大")
+                        Text("Subscribe to unlock all idioms and a bigger question bank")
                             .font(.system(size: 12.5))
                             .foregroundColor(.ink3)
                             .underline()

@@ -28,7 +28,7 @@ struct IdiomDetailView: View {
                 AccentDivider()
                     .padding(.top, 30)
 
-                Text("释 义")
+                Text("MEANING")
                     .font(.system(size: 11, weight: .semibold))
                     .tracking(3)
                     .foregroundColor(.ink3)
@@ -92,7 +92,7 @@ struct IdiomDetailView: View {
 
     private var exampleCard: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("例 句")
+            Text("EXAMPLE")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(3)
                 .foregroundColor(.ink3)
@@ -147,10 +147,15 @@ struct LockedIdiomView: View {
                 .font(.system(size: 34, weight: .light))
                 .foregroundColor(.ink3)
 
+            Text("Subscribers Only")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.ink2)
+                .padding(.top, 16)
+
             Button {
                 state.showPaywall = true
             } label: {
-                Text("订阅后解锁全部成语")
+                Text("Subscribe to Unlock All Idioms")
                     .font(.system(size: 15, weight: .semibold))
                     .tracking(1)
                     .foregroundColor(.white)

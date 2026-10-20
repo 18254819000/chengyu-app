@@ -34,11 +34,11 @@ struct PaywallView: View {
                 .padding(.bottom, 30)
             }
             .background(Color.paperBg.ignoresSafeArea())
-            .navigationTitle("订阅")
+            .navigationTitle("Subscribe")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("关闭") { presentationMode.wrappedValue.dismiss() }
+                    Button("Close") { presentationMode.wrappedValue.dismiss() }
                         .foregroundColor(.ink2)
                 }
             }
@@ -57,8 +57,8 @@ struct PaywallView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
-        .alert("提示", isPresented: messageBinding) {
-            Button("知道了") { store.message = nil }
+        .alert("Notice", isPresented: messageBinding) {
+            Button("OK") { store.message = nil }
         } message: {
             Text(store.message ?? "")
         }
@@ -75,11 +75,11 @@ struct PaywallView: View {
 
     private var hero: some View {
         VStack(alignment: .leading, spacing: 8) {
-            (Text("解锁") + Text("全部成语").foregroundColor(.accentRed))
+            (Text("Unlock ") + Text("All Idioms").foregroundColor(.accentRed))
                 .font(.system(size: 26, weight: .bold))
-            Text("每天学一个，积累成多")
+            Text("One idiom a day adds up.")
                 .font(.system(size: 26, weight: .bold))
-            Text("订阅后可查阅成语库全部内容，包含后续新增的每一个成语。")
+            Text("Subscribe to access the full idiom library, including every new idiom we add.")
                 .font(.system(size: 13.5))
                 .foregroundColor(.ink2)
                 .lineSpacing(5)
@@ -91,13 +91,13 @@ struct PaywallView: View {
 
     private var comparisonTable: some View {
         VStack(spacing: 0) {
-            compareRow(name: "", free: "免费", pro: "订阅", isHeader: true)
+            compareRow(name: "", free: "Free", pro: "Premium", isHeader: true)
             Divider().overlay(Color.line)
-            compareRow(name: "可学成语", free: "\(state.freeCount) 个", pro: "全部", isHeader: false)
+            compareRow(name: "Idioms to learn", free: "\(state.freeCount)", pro: "All", isHeader: false)
             Divider().overlay(Color.line)
-            compareRow(name: "例句完整内容", free: "\(state.freeCount) 个内", pro: "全部", isHeader: false)
+            compareRow(name: "Full example sentences", free: "First \(state.freeCount)", pro: "All", isHeader: false)
             Divider().overlay(Color.line)
-            compareRow(name: "后续新增成语", free: "—", pro: "同步解锁", isHeader: false)
+            compareRow(name: "New idioms as they're added", free: "—", pro: "Unlocked automatically", isHeader: false)
         }
         .background(Color.white)
         .cornerRadius(16)
@@ -128,7 +128,7 @@ struct PaywallView: View {
             if store.products.isEmpty {
                 HStack(spacing: 10) {
                     ProgressView()
-                    Text("正在加载订阅商品…")
+                    Text("Loading plans…")
                         .font(.system(size: 13.5))
                         .foregroundColor(.ink3)
                 }
@@ -149,7 +149,7 @@ struct PaywallView: View {
         } label: {
             VStack(alignment: .leading, spacing: 5) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text(isYearly ? "年订阅" : "月订阅")
+                    Text(isYearly ? "Yearly" : "Monthly")
                         .font(.system(size: 15.5, weight: .bold))
                         .foregroundColor(.ink)
                     Spacer()
@@ -157,7 +157,7 @@ struct PaywallView: View {
                         Text(product.displayPrice)
                             .font(.system(size: 21, weight: .bold))
                             .foregroundColor(.ink)
-                        Text(isYearly ? "/ 年" : "/ 月")
+                        Text(isYearly ? "/ year" : "/ month")
                             .font(.system(size: 12.5))
                             .foregroundColor(.ink2)
                     }
@@ -169,7 +169,7 @@ struct PaywallView: View {
                             .fontWeight(.semibold)
                         Text("·")
                     }
-                    Text(isYearly ? "折合每月约 \(monthlyEquivalent(of: product))" : "随时可取消")
+                    Text(isYearly ? "About \(monthlyEquivalent(of: product))/month" : "Cancel anytime")
                 }
                 .font(.system(size: 12.5))
                 .foregroundColor(.ink2)
@@ -184,7 +184,7 @@ struct PaywallView: View {
             )
             .overlay(alignment: .topTrailing) {
                 if isYearly {
-                    Text("更划算")
+                    Text("Best Value")
                         .font(.system(size: 10.5, weight: .bold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 9)
@@ -233,9 +233,9 @@ struct PaywallView: View {
     private var buyButtonTitle: String {
         guard let product = selectedProduct,
               store.trialDescription(for: product) != nil else {
-            return "立即订阅"
+            return "Subscribe Now"
         }
-        return "免费试用并订阅"
+        return "Start Free Trial"
     }
 
     private var restoreButton: some View {
@@ -246,7 +246,7 @@ struct PaywallView: View {
                 if store.isRestoring {
                     ProgressView()
                 }
-                Text("恢复购买")
+                Text("Restore Purchases")
                     .font(.system(size: 13.5))
             }
             .foregroundColor(.ink2)
@@ -260,15 +260,15 @@ struct PaywallView: View {
 
     private var legal: some View {
         VStack(spacing: 8) {
-            Text("试用期结束后按所选方案自动续订扣费，到期前 24 小时内扣款。\n可随时在 iPhone 的「设置 - 订阅」中取消，取消后到期停止续订。")
+            Text("Payment will be charged to your Apple ID at confirmation of purchase. Your subscription automatically renews unless canceled at least 24 hours before the end of the current period, and your account will be charged for renewal within 24 hours prior to that. You can manage or cancel your subscription anytime in your App Store account settings.")
                 .font(.system(size: 11))
                 .foregroundColor(.ink3)
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
             HStack(spacing: 6) {
-                Button("隐私政策") { openURL(AppConfig.privacyPolicyURL) }
+                Button("Privacy Policy") { openURL(AppConfig.privacyPolicyURL) }
                 Text("·").foregroundColor(.ink3)
-                Button("用户协议") { openURL(AppConfig.termsOfUseURL) }
+                Button("Terms of Use") { openURL(AppConfig.termsOfUseURL) }
             }
             .font(.system(size: 11))
             .foregroundColor(.ink2)

@@ -43,11 +43,11 @@ enum DateUtil {
         return ((days % count) + count) % count
     }
 
-    /// 中文展示日期，如「10月20日 周二」
+    /// 展示日期，如「Oct 20, Tue」
     static func displayString(from date: Date) -> String {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "zh_CN")
-        f.dateFormat = "M月d日 EEE"
+        f.locale = Locale(identifier: "en_US")
+        f.dateFormat = "MMM d, EEE"
         return f.string(from: date)
     }
 

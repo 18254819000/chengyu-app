@@ -7,6 +7,8 @@ import IdiomEdit from './views/IdiomEdit.vue';
 import ImportPage from './views/Import.vue';
 import DailyPreview from './views/DailyPreview.vue';
 import ConfigPage from './views/Config.vue';
+import PagesPage from './views/Pages.vue';
+import PageEdit from './views/PageEdit.vue';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -23,6 +25,8 @@ const router = createRouter({
         { path: 'import', component: ImportPage, meta: { title: '批量导入' } },
         { path: 'daily', component: DailyPreview, meta: { title: '每日轮换预览' } },
         { path: 'config', component: ConfigPage, meta: { title: '参数配置' } },
+        { path: 'pages', component: PagesPage, meta: { title: '协议与政策' } },
+        { path: 'pages/edit/:key', component: PageEdit, meta: { title: '编辑文档' } },
       ],
     },
   ],

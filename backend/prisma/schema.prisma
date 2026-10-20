@@ -43,6 +43,15 @@ model AppConfig {
   updatedAt DateTime @updatedAt
 }
 
+// 协议与政策等内容页（隐私政策、用户协议），后台可编辑，content 存 Markdown 原文
+model ContentPage {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique // privacy | terms
+  title     String
+  content   String   @default("")
+  updatedAt DateTime @updatedAt
+}
+
 model Entitlement {
   originalTransactionId String   @id
   productId             String   @default("")

@@ -18,11 +18,11 @@ enum AppConfig {
     static let defaultMonthlyProductID = "com.mengma.dailyidiom.monthly"
     static let defaultYearlyProductID = "com.mengma.dailyidiom.yearly"
 
-    // TODO: 上线前替换为正式托管的隐私政策 / 用户协议公开页面（App Store 审核要求可公开访问的链接）
-    static let privacyPolicyURL = URL(string: "https://example.com/dailyidiom/privacy")!
-    static let termsOfUseURL = URL(string: "https://example.com/dailyidiom/terms")!
-    // TODO: 上线前替换为正式客服邮箱
-    static let supportEmail = "support@example.com"
+    // 隐私政策 / 用户协议：由后端公开页提供，内容在管理端「协议与政策」中维护
+    static let privacyPolicyURL = URL(string: "https://chengyu-backend.onrender.com/pages/privacy")!
+    static let termsOfUseURL = URL(string: "https://chengyu-backend.onrender.com/pages/terms")!
+    // 客服邮箱（与隐私政策中的联系邮箱一致）
+    static let supportEmail = "kingsummerai@gmail.com"
 
     static var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
