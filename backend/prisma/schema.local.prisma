@@ -1,0 +1,56 @@
+// 每日成语 — Prisma schema（生产：PostgreSQL）
+// 本地运行/测试用 schema.local.prisma（仅 datasource provider 不同，其余完全一致）
+// 所有字段使用标量类型（pinyin_chars 存空格分隔字符串、tags 存普通字符串），保证双 provider 兼容。
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Idiom {
+  id            Int      @id @default(autoincrement())
+  idiom         String   @unique
+  pinyin        String   @default("")
+  pinyinChars   String   @default("") // 空格分隔，如 "huà shé tiān zú"
+  definitionZh  String   @default("")
+  definitionEn  String   @default("")
+  exampleZh     String   @default("")
+  exampleEn     String   @default("")
+  source        String?
+  tags          String?
+  sortOrder     Int      @default(0)
+  status        String   @default("draft") // draft | published | offline
+  deleted       Boolean  @default(false) // 软删除标记
+  adminRemark   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AppConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model Entitlement {
+  originalTransactionId String   @id
+  productId             String   @default("")
+  status                String   @default("active") // active | expired | grace | refunded | revoked
+  expiresAt             DateTime?
+  autoRenewStatus       Boolean  @default(true)
+  environment           String   @default("")
+  rawLatestTransaction  String   @default("") // 最近一次签名交易解析后的 JSON（字符串存储，双 provider 兼容）
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

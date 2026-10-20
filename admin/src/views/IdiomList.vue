@@ -1,0 +1,150 @@
+<template>
+  <div>
+    <div class="toolbar">
+      <el-input v-model="q" placeholder="按成语或拼音搜索" clearable style="width: 240px" @keyup.enter="reload" @clear="reload" />
+      <el-select v-model="status" placeholder="全部状态" clearable style="width: 140px" @change="reload">
+        <el-option label="草稿" value="draft" />
+        <el-option label="已发布" value="published" />
+        <el-option label="已下架" value="offline" />
+      </el-select>
+      <el-button @click="reload">搜索</el-button>
+      <div class="spacer" />
+      <span class="free-note">当前免费数量：前 {{ freeCount }} 个（在参数配置中修改）</span>
+      <el-button type="primary" @click="router.push('/idioms/new')">新增成语</el-button>
+    </div>
+
+    <el-table :data="items" v-loading="loading" border style="width: 100%">
+      <el-table-column prop="sort_order" label="排序" width="70" />
+      <el-table-column prop="idiom" label="成语" width="120" />
+      <el-table-column prop="pinyin" label="拼音" min-width="170" />
+      <el-table-column label="状态" width="90">
+        <template #default="{ row }">
+          <el-tag v-if="row.status === 'published'" type="success">已发布</el-tag>
+          <el-tag v-else-if="row.status === 'offline'" type="info">已下架</el-tag>
+          <el-tag v-else type="warning">草稿</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否免费" width="90">
+        <template #default="{ row }">
+          <el-tag v-if="row.is_free" type="primary">免费</el-tag>
+          <span v-else class="dim">订阅</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" min-width="160">
+        <template #default="{ row }">{{ formatTime(row.updated_at) }}</template>
+      </el-table-column>
+      <el-table-column label="操作" width="250" fixed="right">
+        <template #default="{ row }">
+          <el-button size="small" @click="router.push(`/idioms/edit/${row.id}`)">编辑</el-button>
+          <el-button v-if="row.status !== 'published'" size="small" type="success" @click="publish(row)">发布</el-button>
+          <el-button v-else size="small" type="warning" @click="unpublish(row)">下架</el-button>
+          <el-button size="small" type="danger" @click="remove(row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-pagination
+      class="pager"
+      background
+      layout="total, prev, pager, next, sizes"
+      :total="total"
+      :page-size="pageSize"
+      :current-page="page"
+      :page-sizes="[10, 20, 50, 100]"
+      @current-change="(p: number) => { page = p; load(); }"
+      @size-change="(s: number) => { pageSize = s; page = 1; load(); }"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { api } from '../api';
+
+const router = useRouter();
+const items = ref<any[]>([]);
+const total = ref(0);
+const page = ref(1);
+const pageSize = ref(20);
+const q = ref('');
+const status = ref('');
+const loading = ref(false);
+const freeCount = ref(20);
+
+function formatTime(t: string) {
+  return t ? new Date(t).toLocaleString('zh-CN', { hour12: false }) : '';
+}
+
+async function load() {
+  loading.value = true;
+  try {
+    const params = new URLSearchParams({
+      page: String(page.value),
+      pageSize: String(pageSize.value),
+      q: q.value,
+      status: status.value,
+    });
+    const r = await api(`/admin/idioms?${params}`);
+    items.value = r.items;
+    total.value = r.total;
+  } catch (e: any) {
+    ElMessage.error(e.message);
+  } finally {
+    loading.value = false;
+  }
+}
+function reload() {
+  page.value = 1;
+  load();
+}
+async function publish(row: any) {
+  try {
+    await api(`/admin/idioms/${row.id}/publish`, { method: 'POST' });
+    ElMessage.success('发布成功');
+    load();
+  } catch (e: any) {
+    ElMessage.error(e.message);
+  }
+}
+async function unpublish(row: any) {
+  try {
+    await api(`/admin/idioms/${row.id}/unpublish`, { method: 'POST' });
+    ElMessage.success('已下架');
+    load();
+  } catch (e: any) {
+    ElMessage.error(e.message);
+  }
+}
+async function remove(row: any) {
+  await ElMessageBox.confirm(`确定删除成语「${row.idiom}」吗？删除为软删除，可由数据库恢复。`, '删除确认', {
+    type: 'warning',
+    confirmButtonText: '删除',
+    cancelButtonText: '取消',
+  });
+  try {
+    await api(`/admin/idioms/${row.id}`, { method: 'DELETE' });
+    ElMessage.success('已删除');
+    load();
+  } catch (e: any) {
+    ElMessage.error(e.message);
+  }
+}
+
+onMounted(async () => {
+  try {
+    const cfg = await api('/admin/config');
+    freeCount.value = cfg.free_count;
+  } catch { /* 忽略 */ }
+  load();
+});
+</script>
+
+<style scoped>
+.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.spacer { flex: 1; }
+.free-note { color: #9aa1a9; font-size: 13px; }
+.dim { color: #9aa1a9; }
+.pager { margin-top: 16px; justify-content: flex-end; }
+</style>
