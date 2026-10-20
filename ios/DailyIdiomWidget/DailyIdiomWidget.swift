@@ -94,8 +94,21 @@ struct DailyIdiomWidgetView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color.paperBg)
+        .modifier(WidgetBackgroundModifier())
         .widgetURL(URL(string: "\(AppConfig.urlScheme)://idiom/\(entry.daily.id)"))
+    }
+}
+
+/// 组件背景：iOS 17+ 用 containerBackground API 上报背景（消除系统
+/// 「Please adopt the containerBackground API」提示），iOS 15/16 用普通
+/// background 兜底；两条路径视觉一致，都是纸面色 #FAF8F4。
+struct WidgetBackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            content.containerBackground(Color.paperBg, for: .widget)
+        } else {
+            content.background(Color.paperBg)
+        }
     }
 }
 

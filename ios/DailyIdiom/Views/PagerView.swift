@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// UIPageViewController 包装的左右翻页容器：
+/// UIPageViewController 包装的翻页容器（.pageCurl 纸张翻页效果）：
 /// 左滑 = 下一个、右滑 = 上一个；相邻页由 dataSource 自然预加载。
 /// 外部修改 currentIndex（如列表定位、深链接）会驱动它动画跳页；手势翻页完成后回写 currentIndex。
 struct PagerView<Content: View>: UIViewControllerRepresentable {
@@ -14,12 +14,17 @@ struct PagerView<Content: View>: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> UIPageViewController {
-        let pvc = UIPageViewController(transitionStyle: .scroll,
-                                       navigationOrientation: .horizontal,
-                                       options: nil)
+        // 纸张翻页：pageCurl + spineLocation 取 min（书脊在左侧，单页翻动），单面显示
+        let pvc = UIPageViewController(
+            transitionStyle: .pageCurl,
+            navigationOrientation: .horizontal,
+            options: [.spineLocation: NSNumber(value: UIPageViewController.SpineLocation.min.rawValue)]
+        )
         pvc.dataSource = context.coordinator
         pvc.delegate = context.coordinator
-        pvc.view.backgroundColor = .clear
+        pvc.isDoubleSided = false
+        // 翻页时露出的容器边缘也用不透明纸面色，避免出现黑边（色值同 Theme.paperBg #FAF8F4）
+        pvc.view.backgroundColor = UIColor(red: 250 / 255, green: 248 / 255, blue: 244 / 255, alpha: 1)
         if pageCount > 0 {
             let index = min(max(currentIndex, 0), pageCount - 1)
             let vc = context.coordinator.makeController(at: index)
@@ -63,7 +68,8 @@ struct PagerView<Content: View>: UIViewControllerRepresentable {
         func makeController(at index: Int) -> UIHostingController<Content> {
             if let cached = cache[index] { return cached }
             let vc = UIHostingController(rootView: parent.content(index))
-            vc.view.backgroundColor = .clear
+            // pageCurl 会露出纸背，页面背景必须不透明（纸面色 #FAF8F4，与 Theme.paperBg 一致）
+            vc.view.backgroundColor = UIColor(red: 250 / 255, green: 248 / 255, blue: 244 / 255, alpha: 1)
             cache[index] = vc
             indexByController[ObjectIdentifier(vc)] = index
             return vc

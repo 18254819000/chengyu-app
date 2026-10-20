@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// 学习页：顶部字标栏（字标 + 日期 + 齿轮设置入口）+ 成语翻页区。
-/// 按 UI 定稿：无标签、无个数、无进度、无切换按钮，切换只靠左右滑。
+/// 学习页（首页）：顶部字标栏（字标 + 日期 + 「全部」与个人中心两个跳页入口）+ 成语翻页区。
+/// 按 UI 定稿：无标签、无个数、无进度、无切换按钮，翻页只靠左右滑。
 struct LearnView: View {
     @EnvironmentObject var state: AppState
 
@@ -30,21 +30,34 @@ struct LearnView: View {
             Text(DateUtil.displayString(from: Date()))
                 .font(.system(size: 12))
                 .foregroundColor(.ink3)
-            Button {
-                state.showSettings = true
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 17))
+            NavigationLink(destination: AllIdiomsView(), isActive: $state.showAllList) {
+                Text("全部")
+                    .font(.system(size: 14.5, weight: .medium))
+                    .foregroundColor(.ink2)
+                    .frame(height: 34)
+                    .padding(.horizontal, 6)
+            }
+            .padding(.leading, 8)
+            NavigationLink(destination: settingsDestination, isActive: $state.showSettings) {
+                Image(systemName: "person.crop.circle")
+                    .font(.system(size: 19))
                     .foregroundColor(.ink2)
                     .frame(width: 34, height: 34)
                     .overlay(
                         Circle().stroke(Color.line, lineWidth: 1)
                     )
             }
-            .padding(.leading, 10)
+            .padding(.leading, 6)
         }
         .padding(.horizontal, 26)
         .padding(.top, 14)
+    }
+
+    /// 个人中心页（设置内容复用 SettingsView），推入时带系统导航栏与标题
+    private var settingsDestination: some View {
+        SettingsView()
+            .navigationTitle("个人中心")
+            .navigationBarTitleDisplayMode(.inline)
     }
 
     @ViewBuilder

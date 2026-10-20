@@ -10,33 +10,31 @@ struct AllIdiomsView: View {
     @State private var searchTask: Task<Void, Never>?
 
     var body: some View {
-        NavigationView {
-            Group {
-                if let results = results {
-                    if results.isEmpty {
-                        emptySearchState
-                    } else {
-                        list(of: results)
-                    }
+        Group {
+            if let results = results {
+                if results.isEmpty {
+                    emptySearchState
                 } else {
-                    list(of: state.idioms)
+                    list(of: results)
                 }
-            }
-            .background(Color.paperBg.ignoresSafeArea())
-            .navigationTitle("全部成语")
-            .navigationBarTitleDisplayMode(.large)
-            .searchable(text: $query, prompt: "搜索成语或拼音")
-            .onChange(of: query) { newValue in
-                scheduleSearch(newValue)
+            } else {
+                list(of: state.idioms)
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .background(Color.paperBg.ignoresSafeArea())
+        .navigationTitle("全部成语")
+        .navigationBarTitleDisplayMode(.large)
+        .searchable(text: $query, prompt: "搜索成语或拼音")
+        .onChange(of: query) { newValue in
+            scheduleSearch(newValue)
+        }
     }
 
     private func list(of items: [Idiom]) -> some View {
         List {
             ForEach(items) { item in
                 Button {
+                    // selectIdiom 会置 showAllList=false 收起本页回首页，并翻到该成语
                     state.selectIdiom(id: item.id)
                 } label: {
                     row(for: item)

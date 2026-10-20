@@ -5,10 +5,6 @@ import WidgetKit
 /// 启动先读缓存渲染 -> 拉 /config 比对 content_version -> 变化才拉全量 -> 写缓存与 App Group 共享存储 -> 刷新小组件。
 @MainActor
 final class AppState: ObservableObject {
-    enum Tab: String, CaseIterable {
-        case learn, all, mine
-    }
-
     @Published var config: AppConfigResponse?
     @Published var idioms: [Idiom] = []
     @Published var entitlement: EntitlementStatus?
@@ -16,8 +12,10 @@ final class AppState: ObservableObject {
     /// 同步失败提示（有缓存时仅弱提示，无缓存时页面给重试入口）
     @Published var syncError: String?
     @Published var currentIndex: Int = 0
-    @Published var selectedTab: Tab = .learn
+    /// 首页右上角「全部」入口 NavigationLink 的激活状态（true = 列表页已推入）
+    @Published var showAllList = false
     @Published var showPaywall = false
+    /// 首页右上角个人中心入口 NavigationLink 的激活状态（true = 个人中心已推入）
     @Published var showSettings = false
     @Published var newIdiomIds: Set<Int> = []
     @Published var pendingNewCount: Int = 0
@@ -198,7 +196,7 @@ final class AppState: ObservableObject {
         LocalStore.lastVisitDate = DateUtil.todayString()
     }
 
-    /// 从列表 / 深链接定位到某个成语（切换到学习 Tab 并翻到对应页），并清除其「新」角标
+    /// 从列表 / 深链接定位到某个成语（回到首页并翻到对应页），并清除其「新」角标
     func selectIdiom(id: Int) {
         guard let idx = idioms.firstIndex(where: { $0.id == id }) else {
             pendingDeepLinkId = id
@@ -208,7 +206,9 @@ final class AppState: ObservableObject {
             newIdiomIds.remove(id)
             LocalStore.newIdiomIds = Array(newIdiomIds)
         }
-        selectedTab = .learn
+        // 收起可能推入中的列表页 / 个人中心回到首页，PagerView 会按 currentIndex 动画跳页
+        showAllList = false
+        showSettings = false
         currentIndex = idx
         savePosition()
     }

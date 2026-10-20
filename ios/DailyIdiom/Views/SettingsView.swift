@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// 设置内容：首页齿轮打开的 Sheet 与底部「我的」Tab 复用同一份。
-/// 调用方负责外包 NavigationView 并设置标题。
+/// 个人中心内容：由首页右上角个人中心入口以 NavigationLink 推入本页。
+/// 调用方（LearnView 的导航目标）负责设置导航标题。
 struct SettingsView: View {
     @EnvironmentObject var state: AppState
     @EnvironmentObject var store: StoreManager
@@ -143,25 +143,5 @@ struct SettingsView: View {
         if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
             openURL(url)
         }
-    }
-}
-
-/// 首页齿轮打开的设置 Sheet 包装（带关闭按钮）
-struct SettingsSheetView: View {
-    @Environment(\.presentationMode) private var presentationMode
-
-    var body: some View {
-        NavigationView {
-            SettingsView()
-                .navigationTitle("设置")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("关闭") { presentationMode.wrappedValue.dismiss() }
-                            .foregroundColor(.ink2)
-                    }
-                }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

@@ -45,6 +45,13 @@
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
+	<key>UILaunchScreen</key>
+	<dict>
+		<!-- 指定启动屏背景色（资源目录中的 LaunchBackground，与纸面色一致）；
+		     缺此配置时系统按兼容模式渲染，真机上下会出现黑块 -->
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
