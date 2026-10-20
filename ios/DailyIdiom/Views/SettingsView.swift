@@ -40,6 +40,12 @@ struct SettingsView: View {
                     }
                 }
                 rowDivider
+                NavigationLink {
+                    AboutView()
+                } label: {
+                    rowLabel("About Daily Chengyu", trailing: nil)
+                }
+                rowDivider
 
                 Text("Daily Chengyu · Version \(AppConfig.appVersion)")
                     .font(.system(size: 12))

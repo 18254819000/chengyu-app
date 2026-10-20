@@ -7,6 +7,10 @@ struct RootView: View {
     @EnvironmentObject var state: AppState
     @Environment(\.scenePhase) private var scenePhase
 
+    /// 应用内欢迎页（SplashView）是否呈现：冷启动时为 true，约 1.6 秒后由定时器置 false 淡出。
+    /// 只在本视图首次出现时调度一次，从后台切回前台不会重新出现。
+    @State private var showSplash = true
+
     /// 本批新增成语的预览条目：从新成语 id 集合中按全量列表的现有顺序取前 3 条，
     /// 在全量列表里查不到的（已下架等）自动跳过；结果为空表示这次不该弹卡。
     private var newIdiomPreview: [Idiom] {
@@ -46,8 +50,24 @@ struct RootView: View {
                 .transition(.opacity)
                 .zIndex(1)
             }
+
+            if showSplash {
+                SplashView()
+                    .transition(.opacity)
+                    .zIndex(2)
+            }
         }
         .animation(.easeOut(duration: 0.28), value: showNewIdiomsCard)
+        .animation(.easeOut(duration: 0.45), value: showSplash)
+        .onAppear {
+            // 欢迎页只在冷启动呈现：固定约 1.6 秒后淡出，不等首次同步，
+            // 因此同步再慢也不会把欢迎页拖过约 2.4 秒。guard 保证即便
+            // onAppear 再次触发也不会重新调度（消失后本层不再出现）。
+            guard showSplash else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                showSplash = false
+            }
+        }
         .task {
             await state.bootstrap()
         }

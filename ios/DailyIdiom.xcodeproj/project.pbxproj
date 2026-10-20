@@ -22,6 +22,8 @@
 		BB0000000000000000000101 /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000101 /* QuizView.swift */; };
 		BB0000000000000000000102 /* ShareViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000102 /* ShareViews.swift */; };
 		BB0000000000000000000103 /* QuizEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000103 /* QuizEngine.swift */; };
+		BB0000000000000000000104 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000104 /* SplashView.swift */; };
+		BB0000000000000000000105 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000105 /* AboutView.swift */; };
 		BB0000000000000000000040 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000013 /* AppConfig.swift */; };
 		BB0000000000000000000041 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000014 /* Models.swift */; };
 		BB0000000000000000000042 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000015 /* APIClient.swift */; };
@@ -84,6 +86,8 @@
 		AA0000000000000000000101 /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000102 /* ShareViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViews.swift; sourceTree = "<group>"; };
 		AA0000000000000000000103 /* QuizEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizEngine.swift; sourceTree = "<group>"; };
+		AA0000000000000000000104 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000105 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000013 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		AA0000000000000000000014 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		AA0000000000000000000015 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
@@ -156,6 +160,8 @@
 				AA0000000000000000000012 /* WidgetGuideView.swift */,
 				AA0000000000000000000101 /* QuizView.swift */,
 				AA0000000000000000000102 /* ShareViews.swift */,
+				AA0000000000000000000104 /* SplashView.swift */,
+				AA0000000000000000000105 /* AboutView.swift */,
 			);
 			name = Views;
 			path = Views;
@@ -253,6 +259,8 @@
 				BB0000000000000000000101 /* QuizView.swift in Sources */,
 				BB0000000000000000000102 /* ShareViews.swift in Sources */,
 				BB0000000000000000000103 /* QuizEngine.swift in Sources */,
+				BB0000000000000000000104 /* SplashView.swift in Sources */,
+				BB0000000000000000000105 /* AboutView.swift in Sources */,
 				BB0000000000000000000040 /* AppConfig.swift in Sources */,
 				BB0000000000000000000041 /* Models.swift in Sources */,
 				BB0000000000000000000042 /* APIClient.swift in Sources */,
