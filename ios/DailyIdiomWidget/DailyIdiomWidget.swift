@@ -66,7 +66,7 @@ struct DailyIdiomWidgetView: View {
                 let chars = Array(entry.daily.idiom)
                 ForEach(Array(chars.enumerated()), id: \.offset) { item in
                     Text(String(item.element))
-                        .font(.system(size: 54, weight: .semibold))
+                        .font(.system(size: 34, weight: .semibold))
                         .foregroundColor(.ink)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
@@ -77,22 +77,24 @@ struct DailyIdiomWidgetView: View {
             }
 
             AccentDivider()
-                .padding(.top, 18)
+                .padding(.top, 10)
 
             Text(entry.daily.definitionZh ?? "")
-                .font(.system(size: 15, weight: .medium))
-                .lineSpacing(6)
-                .padding(.top, 14)
+                .font(.system(size: 13.5, weight: .medium))
+                .lineSpacing(4)
+                .lineLimit(2)
+                .padding(.top, 8)
 
             Text(entry.daily.definitionEn ?? "")
-                .font(.system(size: 13, design: .serif))
+                .font(.system(size: 11.5, design: .serif))
                 .foregroundColor(.ink2)
-                .lineSpacing(5)
-                .padding(.top, 6)
+                .lineSpacing(3)
+                .lineLimit(2)
+                .padding(.top, 4)
 
             Spacer(minLength: 0)
         }
-        .padding(24)
+        .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .modifier(WidgetBackgroundModifier())
         .widgetURL(URL(string: "\(AppConfig.urlScheme)://idiom/\(entry.daily.id)"))
@@ -119,7 +121,7 @@ struct DailyIdiomWidget: Widget {
         }
         .configurationDisplayName("每日成语")
         .description("每天认识一个新成语")
-        .supportedFamilies([.systemLarge])
+        .supportedFamilies([.systemMedium])
     }
 }
 
