@@ -41,7 +41,7 @@ struct SettingsView: View {
                 }
                 rowDivider
 
-                Text("每日成语 版本 \(AppConfig.appVersion)")
+                Text("Daily Chengyu 版本 \(AppConfig.appVersion)")
                     .font(.system(size: 12))
                     .foregroundColor(.ink3)
                     .tracking(1)

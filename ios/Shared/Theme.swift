@@ -33,3 +33,28 @@ struct AccentDivider: View {
         }
     }
 }
+
+/// 顶栏同款图标按钮的外观规格：36pt 圆、1pt 细线色描边、墨色 16pt 图标。
+/// 首页顶栏四个入口（测试 / 全部 / 分享 / 个人中心）共用，保证视觉完全一致：
+/// NavigationLink 与普通 Button 的 label 都用 TopBarIconLabel 渲染。
+enum TopBarIconSpec {
+    static let diameter: CGFloat = 36
+    static let iconSize: CGFloat = 16
+}
+
+struct TopBarIconLabel: View {
+    let systemName: String
+    /// 禁用态（如当前成语已锁定、不可分享时）图标转弱灰
+    var isEnabled: Bool = true
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: TopBarIconSpec.iconSize, weight: .medium))
+            .foregroundColor(isEnabled ? .ink : .ink3)
+            .frame(width: TopBarIconSpec.diameter, height: TopBarIconSpec.diameter)
+            .overlay(
+                Circle().stroke(Color.line, lineWidth: 1)
+            )
+            .contentShape(Circle())
+    }
+}

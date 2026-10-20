@@ -119,8 +119,8 @@ struct DailyIdiomWidget: Widget {
         StaticConfiguration(kind: "DailyIdiomWidget", provider: Provider()) { entry in
             DailyIdiomWidgetView(entry: entry)
         }
-        .configurationDisplayName("每日成语")
-        .description("每天认识一个新成语")
+        .configurationDisplayName("Daily Chengyu")
+        .description("A new Chinese idiom every day")
         .supportedFamilies([.systemMedium])
     }
 }

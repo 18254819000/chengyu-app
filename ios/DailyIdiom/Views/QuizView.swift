@@ -191,12 +191,15 @@ struct QuizView: View {
             subjectHead(question.subject)
         case .medium, .hard:
             VStack(alignment: .leading, spacing: 0) {
-                Text(engine.difficulty == .medium ? "下面这段释义，说的是哪个成语？" : "把空格处补上正确的成语")
+                Text(engine.difficulty == .medium ? "下面这段英文释义，说的是哪个成语？" : "把空格处补上正确的成语")
                     .font(.system(size: 13))
                     .foregroundColor(.ink3)
                 Text(question.promptText ?? "")
-                    .font(.system(size: engine.difficulty == .medium ? 19 : 17.5, weight: .medium))
-                    .lineSpacing(8)
+                    .font(.system(size: engine.difficulty == .medium ? 18 : 17.5,
+                                  weight: .medium,
+                                  design: engine.difficulty == .medium ? .serif : .default))
+                    .lineSpacing(7)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 12)
             }
         }
@@ -246,10 +249,12 @@ struct QuizView: View {
             HStack(alignment: .center, spacing: 10) {
                 Text(option)
                     .font(.system(size: engine.difficulty == .easy ? 15.5 : 17.5,
-                                  weight: engine.difficulty == .easy ? .regular : .semibold))
+                                  weight: engine.difficulty == .easy ? .regular : .semibold,
+                                  design: engine.difficulty == .easy ? .serif : .default))
                     .foregroundColor(optionForeground(isAnswer: isAnswer, isSelected: isSelected, answered: answered))
                     .lineSpacing(4)
                     .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
                 if answered && isAnswer {
                     Text("✓")

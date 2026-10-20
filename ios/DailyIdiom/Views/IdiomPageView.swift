@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 /// 单个成语页：有权益显示完整详情，锁定条目显示锁定页。
 struct IdiomPageView: View {
@@ -16,11 +15,9 @@ struct IdiomPageView: View {
 }
 
 /// 详情页，按首页 UI 定稿：逐字拼音单元、细线、中英释义、例句浅卡（成语在例句中朱红加粗）。
-/// 右上角带分享按钮（仅此完整详情页有，锁定页不显示）：生成成语分享卡走系统分享面板。
+/// 分享入口已统一到首页顶栏（作用于当前成语），本页内不再放分享按钮。
 struct IdiomDetailView: View {
     let idiom: Idiom
-    @State private var shareImage: UIImage?
-    @State private var isSharing = false
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -56,34 +53,6 @@ struct IdiomDetailView: View {
             .padding(.horizontal, 28)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .overlay(alignment: .topTrailing) {
-            shareButton
-        }
-        .sheet(isPresented: $isSharing) {
-            if let shareImage = shareImage {
-                ShareSheet(items: [shareImage])
-            }
-        }
-    }
-
-    /// 分享按钮：点击时才渲染分享卡（1080×1350），生成成功才弹面板
-    private var shareButton: some View {
-        Button {
-            shareImage = ShareCardRenderer.render(IdiomShareCard(idiom: idiom))
-            if shareImage != nil {
-                isSharing = true
-            }
-        } label: {
-            Image(systemName: "square.and.arrow.up")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.ink)
-                .frame(width: 38, height: 38)
-                .overlay(
-                    Circle().stroke(Color.line, lineWidth: 1)
-                )
-        }
-        .padding(.top, 40)
-        .padding(.trailing, 22)
     }
 
     /// 逐字对齐：每个汉字一个纵向单元（拼音在上、汉字在下），等距排布

@@ -35,14 +35,39 @@ struct ShareSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
-/// 成语分享卡（1080×1350）：纸面极简——字标、逐字拼音 + 成语大字、朱红细线、中英释义、
-/// 例句浅卡，底部一句轻问句 + App 名。朱红只作点缀，无渐变、无大面积彩色。
+/// 品牌印章：朱红圆角方块 + 白色加粗两行「Daily / Chengyu」，像盖章一样落在卡片一角。
+/// 两张分享卡共用同一组件、同一规格，保证品牌标记一致。默认边长 160（在 1080×1350 画布上）。
+struct BrandSeal: View {
+    var size: CGFloat = 160
+
+    var body: some View {
+        VStack(spacing: size * 0.03) {
+            Text("Daily")
+            Text("Chengyu")
+        }
+        .font(.system(size: size * 0.24, weight: .bold))
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .foregroundColor(.white)
+        .padding(.horizontal, size * 0.06)
+        .frame(width: size, height: size)
+        .background(Color.accentRed)
+        .cornerRadius(size * 0.18)
+    }
+}
+
+/// 成语分享卡（1080×1350），英文为主：英文小字标、成语汉字大字 + 逐字拼音、英文释义为主、
+/// 中文释义小字为辅、例句（中文 + 英文译文），底部英文轻问句 + 品牌印章。
+/// 有意保留的中文元素：成语汉字本体、中文释义（小字）、中文例句——卡片的分享对象要学的正是中文。
 struct IdiomShareCard: View {
     let idiom: Idiom
 
     var body: some View {
         VStack(spacing: 0) {
-            wordmark
+            Text("Daily Chengyu")
+                .font(.system(size: 36, weight: .bold))
+                .tracking(5)
+                .foregroundColor(.ink)
 
             Spacer(minLength: 40)
 
@@ -52,53 +77,39 @@ struct IdiomShareCard: View {
                 .frame(width: 520)
                 .padding(.top, 64)
 
-            Text(idiom.definitionZh ?? "")
-                .font(.system(size: 48, weight: .medium))
+            Text(idiom.definitionEn ?? "")
+                .font(.system(size: 46, design: .serif))
                 .foregroundColor(.ink)
-                .lineSpacing(14)
+                .lineSpacing(12)
                 .multilineTextAlignment(.center)
                 .padding(.top, 56)
 
-            Text(idiom.definitionEn ?? "")
-                .font(.system(size: 37, design: .serif))
-                .foregroundColor(.ink2)
-                .lineSpacing(10)
+            Text(idiom.definitionZh ?? "")
+                .font(.system(size: 30, weight: .medium))
+                .foregroundColor(.ink3)
+                .lineSpacing(8)
                 .multilineTextAlignment(.center)
-                .padding(.top, 26)
+                .padding(.top, 20)
 
             if let exampleZh = idiom.exampleZh, !exampleZh.isEmpty {
                 exampleCard(exampleZh: exampleZh)
-                    .padding(.top, 60)
+                    .padding(.top, 56)
             }
 
             Spacer(minLength: 40)
 
-            Text("这个成语，你读对了吗？")
-                .font(.system(size: 44, weight: .medium))
-                .foregroundColor(.ink)
-
-            Text("每 日 成 语")
-                .font(.system(size: 29))
-                .tracking(4)
-                .foregroundColor(.ink3)
-                .padding(.top, 22)
+            HStack(alignment: .center, spacing: 0) {
+                Text("Can you read this one?")
+                    .font(.system(size: 40, weight: .medium, design: .serif))
+                    .foregroundColor(.ink)
+                Spacer()
+                BrandSeal()
+            }
         }
         .padding(.horizontal, 92)
         .padding(.vertical, 96)
         .frame(width: 1080, height: 1350)
         .background(Color.paperBg)
-    }
-
-    private var wordmark: some View {
-        HStack(spacing: 0) {
-            Text("每日成语")
-                .font(.system(size: 42, weight: .bold))
-                .tracking(6)
-            Text("。")
-                .font(.system(size: 42, weight: .bold))
-                .foregroundColor(.accentRed)
-        }
-        .foregroundColor(.ink)
     }
 
     /// 逐字对齐：拼音在上、汉字在下，与详情页同式；逐字拼音缺失 / 数量不对时退回完整拼音
@@ -138,14 +149,16 @@ struct IdiomShareCard: View {
     private func exampleCard(exampleZh: String) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             highlightedExample(exampleZh)
-                .font(.system(size: 40))
-                .lineSpacing(12)
+                .font(.system(size: 38))
+                .lineSpacing(11)
 
-            Text(idiom.exampleEn ?? "")
-                .font(.system(size: 33, design: .serif))
-                .foregroundColor(.ink2)
-                .lineSpacing(8)
-                .padding(.top, 16)
+            if let exampleEn = idiom.exampleEn, !exampleEn.isEmpty {
+                Text(exampleEn)
+                    .font(.system(size: 31, design: .serif))
+                    .foregroundColor(.ink2)
+                    .lineSpacing(8)
+                    .padding(.top, 14)
+            }
         }
         .padding(44)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -164,8 +177,8 @@ struct IdiomShareCard: View {
     }
 }
 
-/// 成绩分享卡（1080×1350）：难度标签、大号分数、答对题数，底部挑战语按成绩分档
-/// （带表情的文案是用户定的分享口径，卡片其余部分保持纸面极简）。
+/// 成绩分享卡（1080×1350），全英文：标题 Chengyu Quiz、难度标签 Easy/Medium/Hard、大号分数、
+/// 「X/10 correct」、挑战语按成绩分档（英文，带表情为用户定的分享口径），底部英文日期 + 品牌印章。
 struct ScoreShareCard: View {
     let difficulty: QuizDifficulty
     let score: Int
@@ -175,12 +188,12 @@ struct ScoreShareCard: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Text("每日成语 · 成语测试")
-                .font(.system(size: 42, weight: .bold))
+            Text("Chengyu Quiz")
+                .font(.system(size: 44, weight: .bold))
                 .tracking(4)
                 .foregroundColor(.ink)
 
-            Text(difficulty.tagText)
+            Text(difficulty.englishTitle)
                 .font(.system(size: 32, weight: .semibold))
                 .foregroundColor(.accentRed)
                 .padding(.horizontal, 30)
@@ -191,41 +204,35 @@ struct ScoreShareCard: View {
 
             Spacer(minLength: 40)
 
-            HStack(alignment: .bottom, spacing: 10) {
-                Text("\(score)")
-                    .font(.system(size: 330, weight: .bold))
-                    .foregroundColor(.ink)
-                Text("分")
-                    .font(.system(size: 66, weight: .semibold))
-                    .foregroundColor(.ink)
-                    .padding(.bottom, 52)
-            }
+            Text("\(score)")
+                .font(.system(size: 330, weight: .bold))
+                .foregroundColor(.ink)
 
-            Text("答对 \(correct)/\(total) 题")
-                .font(.system(size: 54, weight: .medium))
+            Text("\(correct)/\(total) correct")
+                .font(.system(size: 52, weight: .medium))
                 .foregroundColor(.ink2)
-                .padding(.top, 10)
+                .padding(.top, 6)
 
             AccentDivider()
                 .frame(width: 520)
                 .padding(.top, 64)
 
             Text(Self.challengeLine(score: score))
-                .font(.system(size: 58, weight: .semibold))
+                .font(.system(size: 54, weight: .semibold))
                 .foregroundColor(.ink)
+                .multilineTextAlignment(.center)
+                .lineSpacing(8)
                 .padding(.top, 56)
 
             Spacer(minLength: 40)
 
-            Text(DateUtil.displayString(from: date))
-                .font(.system(size: 30))
-                .foregroundColor(.ink3)
-
-            Text("每 日 成 语")
-                .font(.system(size: 29))
-                .tracking(4)
-                .foregroundColor(.ink3)
-                .padding(.top, 18)
+            HStack(alignment: .center, spacing: 0) {
+                Text(DateUtil.englishString(from: date))
+                    .font(.system(size: 30))
+                    .foregroundColor(.ink3)
+                Spacer()
+                BrandSeal()
+            }
         }
         .padding(.horizontal, 92)
         .padding(.vertical, 96)
@@ -233,14 +240,14 @@ struct ScoreShareCard: View {
         .background(Color.paperBg)
     }
 
-    /// 挑战语分档：≥80（含满分）邀战 / 50~79 邀请挑战 / <50 自嘲式邀请
+    /// 挑战语分档（英文）：≥80（含满分）邀战 / 50~79 邀请挑战 / <50 自嘲式邀请
     static func challengeLine(score: Int) -> String {
         if score >= 80 {
-            return "不服来战 😏"
+            return "Think you can beat me? 😏"
         } else if score >= 50 {
-            return "来挑战，你能对几道？🤔"
+            return "Come challenge me — how many can you get right? 🤔"
         } else {
-            return "这套题有点东西，来试试 💪"
+            return "Tougher than it looks. Give it a try 💪"
         }
     }
 }

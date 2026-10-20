@@ -1,6 +1,6 @@
 import Foundation
 
-/// 测试难度三档：题型不同——简单看成语选释义，中等看释义选成语，困难例句挖空选词。
+/// 测试难度三档：题型不同——简单看成语选英文释义，中等看英文释义选成语，困难看中文例句挖空选成语。
 enum QuizDifficulty: String, CaseIterable, Identifiable {
     case easy
     case medium
@@ -18,17 +18,26 @@ enum QuizDifficulty: String, CaseIterable, Identifiable {
 
     var subtitle: String {
         switch self {
-        case .easy: return "看成语，选释义"
-        case .medium: return "看释义，选成语"
-        case .hard: return "例句挖空，选成语"
+        case .easy: return "看成语，选英文释义"
+        case .medium: return "看英文释义，选成语"
+        case .hard: return "看中文例句，选成语"
         }
     }
 
-    /// 成绩卡 / 难度标签文案，如「中等难度」
+    /// App 内难度标签文案，如「中等难度」
     var tagText: String { title + "难度" }
+
+    /// 英文难度名（英文成绩分享卡用）
+    var englishTitle: String {
+        switch self {
+        case .easy: return "Easy"
+        case .medium: return "Medium"
+        case .hard: return "Hard"
+        }
+    }
 }
 
-/// 一道题：subject 是被考的成语；promptText 为题面文字（中等 = 中文释义，困难 = 挖空后的例句），
+/// 一道题：subject 是被考的成语；promptText 为题面文字（中等 = 英文释义，困难 = 挖空后的中文例句），
 /// 简单档题面直接用 subject 渲染（成语 + 逐字拼音），promptText 为 nil。
 struct QuizQuestion: Identifiable {
     let id = UUID()
@@ -86,17 +95,17 @@ final class QuizEngine: ObservableObject {
 
     // MARK: 题池
 
-    /// 题池：未锁定且释义齐全的条目；困难档另要求例句包含成语本体（挖空才成立）。
+    /// 题池：未锁定且题目所需字段齐全的条目——简单 / 中等用英文释义出题，要求 definition_en 非空；
+    /// 困难档用中文，要求中文释义非空且例句包含成语本体（挖空才成立）。
     static func pool(for difficulty: QuizDifficulty, in idioms: [Idiom]) -> [Idiom] {
-        let base = idioms.filter { item in
-            !item.locked && !(item.definitionZh ?? "").isEmpty
-        }
+        let unlocked = idioms.filter { !$0.locked }
         switch difficulty {
         case .easy, .medium:
-            return base
+            return unlocked.filter { !($0.definitionEn ?? "").isEmpty }
         case .hard:
-            return base.filter { item in
-                guard let example = item.exampleZh, !example.isEmpty else { return false }
+            return unlocked.filter { item in
+                guard !(item.definitionZh ?? "").isEmpty,
+                      let example = item.exampleZh, !example.isEmpty else { return false }
                 return example.contains(item.idiom)
             }
         }
@@ -164,10 +173,10 @@ final class QuizEngine: ObservableObject {
     private func makeQuestion(subject: Idiom, difficulty: QuizDifficulty, pool: [Idiom]) -> QuizQuestion {
         switch difficulty {
         case .easy:
-            // 选项 = 中文释义；干扰项取其他条目释义（按文本去重，避免同义重复混淆）
-            let answer = subject.definitionZh ?? ""
+            // 选项 = 英文释义；干扰项取其他条目英文释义（按文本去重，避免重复混淆）
+            let answer = subject.definitionEn ?? ""
             var distractors = Array(
-                Set(pool.filter { $0.id != subject.id }.map { $0.definitionZh ?? "" })
+                Set(pool.filter { $0.id != subject.id }.map { $0.definitionEn ?? "" })
             )
             .filter { !$0.isEmpty && $0 != answer }
             .shuffled()
@@ -179,14 +188,14 @@ final class QuizEngine: ObservableObject {
                 answer: answer
             )
         case .medium:
-            // 选项 = 成语名；题面 = 中文释义
+            // 选项 = 成语名；题面 = 英文释义
             let answer = subject.idiom
             let distractors = Array(
                 pool.filter { $0.id != subject.id }.map { $0.idiom }.shuffled().prefix(3)
             )
             return QuizQuestion(
                 subject: subject,
-                promptText: subject.definitionZh,
+                promptText: subject.definitionEn,
                 options: ([answer] + distractors).shuffled(),
                 answer: answer
             )

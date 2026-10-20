@@ -50,4 +50,12 @@ enum DateUtil {
         f.dateFormat = "M月d日 EEE"
         return f.string(from: date)
     }
+
+    /// 英文展示日期，如「Oct 20, 2026」（英文分享卡用）
+    static func englishString(from date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US")
+        f.dateFormat = "MMM d, yyyy"
+        return f.string(from: date)
+    }
 }
