@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 学习页（首页）：顶部字标栏（字标 + 日期 + 「全部」与个人中心两个跳页入口）+ 成语翻页区。
+/// 学习页（首页）：顶部字标栏（字标 + 日期 + 「测试」「全部」与个人中心三个跳页入口）+ 成语翻页区。
 /// 按 UI 定稿：无标签、无个数、无进度、无切换按钮，翻页只靠左右滑。
 struct LearnView: View {
     @EnvironmentObject var state: AppState
@@ -30,6 +30,14 @@ struct LearnView: View {
             Text(DateUtil.displayString(from: Date()))
                 .font(.system(size: 12))
                 .foregroundColor(.ink3)
+            NavigationLink(destination: QuizView(), isActive: $state.showQuiz) {
+                Text("测试")
+                    .font(.system(size: 14.5, weight: .medium))
+                    .foregroundColor(.ink2)
+                    .frame(height: 34)
+                    .padding(.horizontal, 6)
+            }
+            .padding(.leading, 8)
             NavigationLink(destination: AllIdiomsView(), isActive: $state.showAllList) {
                 Text("全部")
                     .font(.system(size: 14.5, weight: .medium))

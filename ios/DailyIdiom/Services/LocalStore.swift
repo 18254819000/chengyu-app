@@ -75,4 +75,35 @@ enum LocalStore {
         guard let data = try? JSONEncoder().encode(status) else { return }
         defaults.set(data, forKey: "cachedEntitlement")
     }
+
+    // MARK: 测试成绩（本地记录）
+    // 本期成绩只存本地：每档最佳用于成绩页对比与难度页展示，累计字段为将来排行榜预留。
+    // 本期不上传服务器、不做账号（排行榜留待后续版本再定身份方案）。
+
+    /// 某档难度的历史最佳分数（difficultyKey 取 quiz_best_easy / quiz_best_medium / quiz_best_hard 的后缀）
+    static func quizBestScore(difficultyKey: String) -> Int {
+        defaults.integer(forKey: "quiz_best_\(difficultyKey)")
+    }
+
+    /// 记录一轮成绩并累计轮次 / 总答对数，返回本轮是否打破该档最佳
+    @discardableResult
+    static func recordQuizScore(difficultyKey: String, score: Int, correct: Int) -> Bool {
+        let isRecord = score > quizBestScore(difficultyKey: difficultyKey)
+        if isRecord {
+            defaults.set(score, forKey: "quiz_best_\(difficultyKey)")
+        }
+        defaults.set(defaults.integer(forKey: "quiz_rounds_total") + 1, forKey: "quiz_rounds_total")
+        defaults.set(defaults.integer(forKey: "quiz_correct_total") + correct, forKey: "quiz_correct_total")
+        return isRecord
+    }
+
+    /// 累计测试轮次（为将来排行榜预留）
+    static var quizRoundsTotal: Int {
+        defaults.integer(forKey: "quiz_rounds_total")
+    }
+
+    /// 累计答对题数（为将来排行榜预留）
+    static var quizCorrectTotal: Int {
+        defaults.integer(forKey: "quiz_correct_total")
+    }
 }

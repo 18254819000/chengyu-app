@@ -17,6 +17,8 @@ final class AppState: ObservableObject {
     @Published var showPaywall = false
     /// 首页右上角个人中心入口 NavigationLink 的激活状态（true = 个人中心已推入）
     @Published var showSettings = false
+    /// 首页右上角「测试」入口 NavigationLink 的激活状态（true = 测试页已推入）
+    @Published var showQuiz = false
     @Published var newIdiomIds: Set<Int> = []
     @Published var pendingNewCount: Int = 0
     @Published var showNewIdiomsAlert = false
@@ -206,9 +208,10 @@ final class AppState: ObservableObject {
             newIdiomIds.remove(id)
             LocalStore.newIdiomIds = Array(newIdiomIds)
         }
-        // 收起可能推入中的列表页 / 个人中心回到首页，PagerView 会按 currentIndex 动画跳页
+        // 收起可能推入中的列表页 / 个人中心 / 测试页回到首页，PagerView 会按 currentIndex 动画跳页
         showAllList = false
         showSettings = false
+        showQuiz = false
         currentIndex = idx
         savePosition()
     }
