@@ -55,8 +55,9 @@ struct Provider: TimelineProvider {
     }
 }
 
-/// 组件视图，严格按 UI 定稿极简版：只有成语大字、细线（左侧朱红短段）、中文解释、英文解释。
-/// 无标题、无拼音、无底部文字、无按钮；点击整体经 widgetURL 直达 App 内该成语详情页。
+/// 组件视图，严格按 UI 定稿极简版：只有成语大字、细线（左侧朱红短段）、英文解释。
+/// 解释只展示英文（中英双语在小组件里放不下、会被截断）；无标题、无拼音、无底部文字、无按钮；
+/// 点击整体经 widgetURL 直达 App 内该成语详情页。
 struct DailyIdiomWidgetView: View {
     var entry: DailyEntry
 
@@ -79,22 +80,17 @@ struct DailyIdiomWidgetView: View {
             AccentDivider()
                 .padding(.top, 10)
 
-            Text(entry.daily.definitionZh ?? "")
-                .font(.system(size: 13.5, weight: .medium))
-                .lineSpacing(4)
-                .lineLimit(2)
-                .padding(.top, 8)
-
             Text(entry.daily.definitionEn ?? "")
-                .font(.system(size: 11.5, design: .serif))
+                .font(.system(size: 12, design: .serif))
                 .foregroundColor(.ink2)
-                .lineSpacing(3)
-                .lineLimit(2)
-                .padding(.top, 4)
+                .lineSpacing(4)
+                .lineLimit(4)
+                .padding(.top, 8)
 
             Spacer(minLength: 0)
         }
-        .padding(16)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .modifier(WidgetBackgroundModifier())
         .widgetURL(URL(string: "\(AppConfig.urlScheme)://idiom/\(entry.daily.id)"))

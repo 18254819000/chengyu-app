@@ -11,6 +11,10 @@ struct Idiom: Codable, Identifiable, Equatable {
     let definitionEn: String?
     let exampleZh: String?
     let exampleEn: String?
+    let storyZh: String?
+    let storyEn: String?
+    let tags: String?
+    let imageUrl: String?
     let sortOrder: Int?
     let status: String?
     let locked: Bool
@@ -22,6 +26,10 @@ struct Idiom: Codable, Identifiable, Equatable {
         case definitionEn = "definition_en"
         case exampleZh = "example_zh"
         case exampleEn = "example_en"
+        case storyZh = "story_zh"
+        case storyEn = "story_en"
+        case tags
+        case imageUrl = "image_url"
         case sortOrder = "sort_order"
     }
 
@@ -35,6 +43,10 @@ struct Idiom: Codable, Identifiable, Equatable {
         definitionEn = try c.decodeIfPresent(String.self, forKey: .definitionEn)
         exampleZh = try c.decodeIfPresent(String.self, forKey: .exampleZh)
         exampleEn = try c.decodeIfPresent(String.self, forKey: .exampleEn)
+        storyZh = try c.decodeIfPresent(String.self, forKey: .storyZh)
+        storyEn = try c.decodeIfPresent(String.self, forKey: .storyEn)
+        tags = try c.decodeIfPresent(String.self, forKey: .tags)
+        imageUrl = try c.decodeIfPresent(String.self, forKey: .imageUrl)
         sortOrder = try c.decodeIfPresent(Int.self, forKey: .sortOrder)
         status = try c.decodeIfPresent(String.self, forKey: .status)
         locked = try c.decodeIfPresent(Bool.self, forKey: .locked) ?? false
@@ -43,7 +55,9 @@ struct Idiom: Codable, Identifiable, Equatable {
     init(id: Int, idiom: String, pinyin: String, pinyinChars: [String]?,
          definitionZh: String?, definitionEn: String?,
          exampleZh: String?, exampleEn: String?,
-         sortOrder: Int?, status: String?, locked: Bool) {
+         sortOrder: Int?, status: String?, locked: Bool,
+         storyZh: String? = nil, storyEn: String? = nil,
+         tags: String? = nil, imageUrl: String? = nil) {
         self.id = id
         self.idiom = idiom
         self.pinyin = pinyin
@@ -52,9 +66,31 @@ struct Idiom: Codable, Identifiable, Equatable {
         self.definitionEn = definitionEn
         self.exampleZh = exampleZh
         self.exampleEn = exampleEn
+        self.storyZh = storyZh
+        self.storyEn = storyEn
+        self.tags = tags
+        self.imageUrl = imageUrl
         self.sortOrder = sortOrder
         self.status = status
         self.locked = locked
+    }
+
+    /// 分类标签：库 tags 字段，多个时按中英文逗号分隔
+    var tagList: [String] {
+        (tags ?? "")
+            .split { $0 == "," || $0 == "，" }
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+    }
+
+    /// 是否有中文故事（故事入口只在此时出现；锁定条目后端不下发故事，天然为 false）
+    var hasStory: Bool {
+        !(storyZh ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// 是否有故事配图
+    var hasStoryImage: Bool {
+        !(imageUrl ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// 逐字拼音：优先用后端 pinyin_chars，缺失时按完整拼音空格拆分兜底

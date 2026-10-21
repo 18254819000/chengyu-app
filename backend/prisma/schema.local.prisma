@@ -31,6 +31,7 @@ model Idiom {
   storyEn       String   @default("") // 典故（英文，可空）
   source        String?
   tags          String?
+  imageUrl      String? // 故事配图链接（管理端配置，App 故事页展示）
   sortOrder     Int      @default(0)
   status        String   @default("draft") // draft | published | offline
   deleted       Boolean  @default(false) // 软删除标记

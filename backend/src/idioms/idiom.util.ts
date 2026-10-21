@@ -12,6 +12,7 @@ export interface IdiomInput {
   story_en?: string;
   source?: string | null;
   tags?: string | null;
+  image_url?: string | null;
   sort_order?: number;
   admin_remark?: string | null;
 }
@@ -91,6 +92,8 @@ export function fullView(row: any, locked = false) {
     example_en: row.exampleEn,
     story_zh: row.storyZh ?? '',
     story_en: row.storyEn ?? '',
+    tags: row.tags ?? '',
+    image_url: row.imageUrl ?? '',
     sort_order: row.sortOrder,
     status: row.status,
     locked,

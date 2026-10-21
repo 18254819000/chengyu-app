@@ -38,6 +38,12 @@
         <el-form-item label="英文故事">
           <el-input v-model="form.story_en" type="textarea" :rows="4" placeholder="可空，与中文故事成对" />
         </el-form-item>
+        <el-form-item label="故事图片">
+          <el-input v-model="form.image_url" placeholder="可空，粘贴 https 图片链接，建议 16:9" />
+          <div v-if="form.image_url" style="margin-top: 8px">
+            <img :src="form.image_url" alt="故事图片预览" style="max-width: 100%; max-height: 180px; border-radius: 10px; display: block" />
+          </div>
+        </el-form-item>
         <el-form-item label="出处（预留）">
           <el-input v-model="form.source" placeholder="可空，第一版不在 App 展示" />
         </el-form-item>
@@ -100,6 +106,7 @@ const form = reactive<any>({
   example_en: '',
   story_zh: '',
   story_en: '',
+  image_url: '',
   source: '',
   tags: '',
   admin_remark: '',
@@ -125,6 +132,7 @@ onMounted(async () => {
         example_en: r.example_en,
         story_zh: r.story_zh || '',
         story_en: r.story_en || '',
+        image_url: r.image_url || '',
         source: r.source || '',
         tags: r.tags || '',
         admin_remark: r.admin_remark || '',

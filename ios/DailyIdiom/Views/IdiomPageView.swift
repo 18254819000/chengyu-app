@@ -18,6 +18,7 @@ struct IdiomPageView: View {
 /// 分享入口已统一到首页顶栏（作用于当前成语），本页内不再放分享按钮。
 struct IdiomDetailView: View {
     let idiom: Idiom
+    @State private var showingStory = false
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -25,8 +26,13 @@ struct IdiomDetailView: View {
                 pinyinUnits
                     .padding(.top, 46)
 
+                if !idiom.tagList.isEmpty {
+                    tagPills
+                        .padding(.top, 20)
+                }
+
                 AccentDivider()
-                    .padding(.top, 30)
+                    .padding(.top, 24)
 
                 Text("MEANING")
                     .font(.system(size: 11, weight: .semibold))
@@ -48,11 +54,71 @@ struct IdiomDetailView: View {
                 exampleCard
                     .padding(.top, 26)
 
+                if idiom.hasStory {
+                    storyEntry
+                        .padding(.top, 16)
+                }
+
                 Spacer(minLength: 30)
             }
             .padding(.horizontal, 28)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .sheet(isPresented: $showingStory) {
+            StoryView(idiom: idiom)
+        }
+    }
+
+    /// 分类标签行：成语下方、细线之前；多个标签横向排列
+    private var tagPills: some View {
+        HStack(spacing: 8) {
+            ForEach(idiom.tagList, id: \.self) { tag in
+                Text(tag)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.accentRed)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
+                    .background(Color.cardBg)
+                    .cornerRadius(999)
+            }
+        }
+    }
+
+    /// 故事入口卡：仅有中文故事时出现，点击全屏 sheet 打开故事页
+    private var storyEntry: some View {
+        Button {
+            showingStory = true
+        } label: {
+            HStack(spacing: 13) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 11)
+                        .fill(Color.cardBg)
+                        .frame(width: 38, height: 38)
+                    Image(systemName: "book")
+                        .font(.system(size: 17))
+                        .foregroundColor(.accentRed)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("典源与故事")
+                        .font(.system(size: 15.5, weight: .semibold))
+                        .foregroundColor(.ink)
+                    Text("ORIGIN & STORY")
+                        .font(.system(size: 12))
+                        .tracking(1)
+                        .foregroundColor(.ink3)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.ink3)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 
     /// 详情字号：按排版单元数缩放，保证 375 宽以上机型上首尾字不被裁（5 单元 54，之后按内容区 319 宽反推：6 单元 49、7 单元 42、10 单元约 28）

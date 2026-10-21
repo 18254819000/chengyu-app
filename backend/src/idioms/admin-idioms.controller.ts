@@ -52,6 +52,8 @@ export class AdminIdiomsController {
       storyEn: body.story_en !== undefined ? String(body.story_en) : existing?.storyEn ?? '',
       source: body.source !== undefined ? body.source || null : existing?.source ?? null,
       tags: body.tags !== undefined ? body.tags || null : existing?.tags ?? null,
+      imageUrl:
+        body.image_url !== undefined ? body.image_url || null : existing?.imageUrl ?? null,
       adminRemark:
         body.admin_remark !== undefined ? body.admin_remark || null : existing?.adminRemark ?? null,
       sortOrder:
@@ -93,7 +95,7 @@ export class AdminIdiomsController {
       filename: 'idioms-template.csv',
       content:
         CSV_TEMPLATE_HEADER +
-        '\n1,示例成语,shì lì chéng yǔ,shì lì chéng yǔ,中文解释示例,English definition example,这是示例例句。,This is an example sentence.,,,draft\n',
+        '\n1,示例成语,shì lì chéng yǔ,shì lì chéng yǔ,中文解释示例,English definition example,这是示例例句。,This is an example sentence.,,,,draft\n',
     };
   }
 
@@ -221,6 +223,7 @@ export class AdminIdiomsController {
       example_en: col('example_en'),
       story_zh: col('story_zh'),
       story_en: col('story_en'),
+      image_url: col('image_url'),
     };
     if (idx.idiom < 0) throw new BadRequestException('CSV 缺少 idiom 列，请使用模板格式');
 
@@ -245,6 +248,7 @@ export class AdminIdiomsController {
         exampleEn: get(r, idx.example_en),
         storyZh: get(r, idx.story_zh),
         storyEn: get(r, idx.story_en),
+        imageUrl: get(r, idx.image_url) || null,
       };
       const fail = (reason: string) => failed.push({ row: lineNo, idiom: idiomText, reason });
       if (!idiomText) {
