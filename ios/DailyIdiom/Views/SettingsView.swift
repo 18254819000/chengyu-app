@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 /// 个人中心内容：由首页右上角个人中心入口以 NavigationLink 推入本页。
 /// 调用方（LearnView 的导航目标）负责设置导航标题。
@@ -18,6 +19,10 @@ struct SettingsView: View {
                 rowDivider
                 actionRow("Manage Subscription") {
                     openManageSubscriptions()
+                }
+                rowDivider
+                actionRow("Redeem Code") {
+                    SKPaymentQueue.default().presentCodeRedemptionSheet()
                 }
                 rowDivider
                 NavigationLink {

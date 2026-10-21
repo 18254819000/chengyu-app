@@ -26,6 +26,7 @@ struct PaywallView: View {
                     buyButton
                         .padding(.top, 22)
                     restoreButton
+                    redeemButton
                     legal
                         .padding(.top, 18)
                 }
@@ -254,6 +255,21 @@ struct PaywallView: View {
             .padding(.top, 14)
         }
         .disabled(store.isRestoring)
+    }
+
+    /// Apple offer-code redemption entry: presents Apple's own system redemption sheet.
+    /// A redeemed offer produces a normal StoreKit transaction, which StoreManager's existing
+    /// Transaction.updates listener picks up and refreshes entitlement from automatically.
+    private var redeemButton: some View {
+        Button {
+            SKPaymentQueue.default().presentCodeRedemptionSheet()
+        } label: {
+            Text("Redeem Code")
+                .font(.system(size: 13.5))
+                .foregroundColor(.ink2)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 14)
+        }
     }
 
     // MARK: 条款（苹果审核要求：续订说明 + 协议与隐私链接）
