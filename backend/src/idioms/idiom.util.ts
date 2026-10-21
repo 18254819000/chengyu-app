@@ -8,6 +8,8 @@ export interface IdiomInput {
   definition_en?: string;
   example_zh?: string;
   example_en?: string;
+  story_zh?: string;
+  story_en?: string;
   source?: string | null;
   tags?: string | null;
   sort_order?: number;
@@ -71,6 +73,8 @@ export function fullView(row: any, locked = false) {
     definition_en: row.definitionEn,
     example_zh: row.exampleZh,
     example_en: row.exampleEn,
+    story_zh: row.storyZh ?? '',
+    story_en: row.storyEn ?? '',
     sort_order: row.sortOrder,
     status: row.status,
     locked,

@@ -2,7 +2,7 @@
 // 运行：node prisma/seed.mjs（需先 prisma generate + db push/migrate）
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -51,34 +51,47 @@ async function main() {
   console.log('默认配置已就绪：free_count=20');
 
   // 3) 导入内容 CSV 并全部 publish（开发数据）
-  const csvPath = join(__dirname, 'content-30.csv');
-  const rows = parseCsv(readFileSync(csvPath, 'utf8'));
-  const header = rows[0].map((h) => h.trim());
-  const col = (n) => header.indexOf(n);
+  // 种子 CSV：content-30.csv（原 30 条，8 列）与 content-new.csv（扩量新条，含 story 列）都读；
+  // 缺 story 列的旧文件默认空字符串，不覆盖、不报错
+  const seedFiles = ['content-30.csv', 'content-new.csv'].filter((f) =>
+    existsSync(join(__dirname, f)),
+  );
   let count = 0;
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    const g = (n) => (col(n) >= 0 ? (r[col(n)] ?? '').trim() : '');
-    const idiom = g('idiom');
-    if (!idiom) continue;
-    const data = {
-      idiom,
-      pinyin: g('pinyin'),
-      pinyinChars: g('pinyin_chars').split(/\s+/).filter(Boolean).join(' '),
-      definitionZh: g('definition_zh'),
-      definitionEn: g('definition_en'),
-      exampleZh: g('example_zh'),
-      exampleEn: g('example_en'),
-      sortOrder: parseInt(g('sort_order'), 10) || i,
-      status: 'published',
-      deleted: false,
-    };
-    await prisma.idiom.upsert({
-      where: { idiom },
-      update: data,
-      create: data,
-    });
-    count++;
+  for (const seedFile of seedFiles) {
+    const rows = parseCsv(readFileSync(join(__dirname, seedFile), 'utf8'));
+    const header = rows[0].map((h) => h.trim());
+    const col = (n) => header.indexOf(n);
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      const g = (n) => (col(n) >= 0 ? (r[col(n)] ?? '').trim() : '');
+      const idiom = g('idiom');
+      if (!idiom) continue;
+      const data = {
+        idiom,
+        pinyin: g('pinyin'),
+        pinyinChars: g('pinyin_chars').split(/\s+/).filter(Boolean).join(' '),
+        definitionZh: g('definition_zh'),
+        definitionEn: g('definition_en'),
+        exampleZh: g('example_zh'),
+        exampleEn: g('example_en'),
+        storyZh: g('story_zh'),
+        storyEn: g('story_en'),
+        sortOrder: parseInt(g('sort_order'), 10) || i,
+        status: 'published',
+        deleted: false,
+      };
+      // 典故空值不参与更新：避免旧 CSV（无 story 列）在每次启动重跑 seed 时
+      // 把管理端已填好的典故刷回空；管理端编辑仍可正常改典故
+      const update = { ...data };
+      if (!data.storyZh) delete update.storyZh;
+      if (!data.storyEn) delete update.storyEn;
+      await prisma.idiom.upsert({
+        where: { idiom },
+        update,
+        create: data,
+      });
+      count++;
+    }
   }
   console.log(`成语已导入并发布：${count} 条`);
 

@@ -48,6 +48,8 @@ export class AdminIdiomsController {
         body.definition_en !== undefined ? String(body.definition_en) : existing?.definitionEn ?? '',
       exampleZh: body.example_zh !== undefined ? String(body.example_zh) : existing?.exampleZh ?? '',
       exampleEn: body.example_en !== undefined ? String(body.example_en) : existing?.exampleEn ?? '',
+      storyZh: body.story_zh !== undefined ? String(body.story_zh) : existing?.storyZh ?? '',
+      storyEn: body.story_en !== undefined ? String(body.story_en) : existing?.storyEn ?? '',
       source: body.source !== undefined ? body.source || null : existing?.source ?? null,
       tags: body.tags !== undefined ? body.tags || null : existing?.tags ?? null,
       adminRemark:
@@ -91,7 +93,7 @@ export class AdminIdiomsController {
       filename: 'idioms-template.csv',
       content:
         CSV_TEMPLATE_HEADER +
-        '\n1,示例成语,shì lì chéng yǔ,shì lì chéng yǔ,中文解释示例,English definition example,这是示例例句。,This is an example sentence.,draft\n',
+        '\n1,示例成语,shì lì chéng yǔ,shì lì chéng yǔ,中文解释示例,English definition example,这是示例例句。,This is an example sentence.,,,draft\n',
     };
   }
 
@@ -189,6 +191,8 @@ export class AdminIdiomsController {
       definition_en: col('definition_en'),
       example_zh: col('example_zh'),
       example_en: col('example_en'),
+      story_zh: col('story_zh'),
+      story_en: col('story_en'),
     };
     if (idx.idiom < 0) throw new BadRequestException('CSV 缺少 idiom 列，请使用模板格式');
 
@@ -211,6 +215,8 @@ export class AdminIdiomsController {
         definitionEn: get(r, idx.definition_en),
         exampleZh: get(r, idx.example_zh),
         exampleEn: get(r, idx.example_en),
+        storyZh: get(r, idx.story_zh),
+        storyEn: get(r, idx.story_en),
       };
       const fail = (reason: string) => failed.push({ row: lineNo, idiom: idiomText, reason });
       if (!idiomText) {
@@ -234,7 +240,13 @@ export class AdminIdiomsController {
       }
       const sortOrder = parseInt(get(r, idx.sort_order), 10) || ++maxSort;
       if (sortOrder > maxSort) maxSort = sortOrder;
-      await this.prisma.idiom.create({ data: { ...data, sortOrder, status: 'draft' } });
+      // 单行入库异常也只记为该行失败，不中断整批、不让请求空响应
+      try {
+        await this.prisma.idiom.create({ data: { ...data, sortOrder, status: 'draft' } });
+      } catch (err: any) {
+        fail(`入库失败：${err?.message || '未知错误'}`);
+        continue;
+      }
       success++;
     }
     return { total: rows.length - 1, success, failedCount: failed.length, failed };

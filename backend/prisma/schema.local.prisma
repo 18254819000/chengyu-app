@@ -27,6 +27,8 @@ model Idiom {
   definitionEn  String   @default("")
   exampleZh     String   @default("")
   exampleEn     String   @default("")
+  storyZh       String   @default("") // 典故（中文，可空；预留字段，App 典故栏目上线后展示）
+  storyEn       String   @default("") // 典故（英文，可空）
   source        String?
   tags          String?
   sortOrder     Int      @default(0)

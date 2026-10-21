@@ -10,8 +10,8 @@
         <el-button @click="downloadTemplate">下载导入模板</el-button>
       </div>
       <div class="tip">
-        列格式：sort_order、idiom、pinyin、pinyin_chars、definition_zh、definition_en、example_zh、example_en、status。
-        逐行校验（必填、逐字拼音个数与汉字数一致、不与已有成语重复），成功行以草稿入库，失败行不入库并在下方报告原因。
+        列格式：sort_order、idiom、pinyin、pinyin_chars、definition_zh、definition_en、example_zh、example_en、story_zh、story_en、status。
+        逐行校验（必填、逐字拼音个数与汉字数一致、文件内重复、本批与已有成语重复），成功行以草稿入库，失败行不入库并在下方报告原因。
       </div>
     </el-card>
 
@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import { api, getToken } from '../api';
+import { api } from '../api';
 
 const file = ref<File | null>(null);
 const fileName = ref('');
@@ -51,13 +51,9 @@ async function doImport() {
   try {
     const form = new FormData();
     form.append('file', file.value);
-    const res = await fetch('/api/v1/admin/idioms/import', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${getToken()}` },
-      body: form,
-    });
-    const json = await res.json();
-    if (!res.ok) throw new Error(json?.message || '导入失败');
+    // 走统一 api 封装（生产走 VITE_API_BASE_URL 指向后端；旧代码写死相对路径 /api/v1，
+    // 在 Pages 上无代理，请求根本到不了后端，空响应体导致 res.json() 报错）
+    const json = await api('/admin/idioms/import', { method: 'POST', body: form });
     report.value = json;
     ElMessage.success('导入完成');
   } catch (e: any) {

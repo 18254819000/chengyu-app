@@ -41,4 +41,4 @@ export function parseCsv(text: string): string[][] {
 }
 
 export const CSV_TEMPLATE_HEADER =
-  'sort_order,idiom,pinyin,pinyin_chars,definition_zh,definition_en,example_zh,example_en,status';
+  'sort_order,idiom,pinyin,pinyin_chars,definition_zh,definition_en,example_zh,example_en,story_zh,story_en,status';
