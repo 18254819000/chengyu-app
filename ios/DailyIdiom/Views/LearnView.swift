@@ -7,8 +7,11 @@ import UIKit
 struct LearnView: View {
     @EnvironmentObject var state: AppState
 
-    @State private var shareImage: UIImage?
-    @State private var isSharing = false
+    @State private var shareItem: ShareItem?
+
+    /// 首次安装滑动提示是否已看过：首次翻页（左滑/右滑）后置 true，此后不再出现。
+    @AppStorage("hasSeenSwipeHint") private var hasSeenSwipeHint = false
+    @State private var hintNudge = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -16,14 +19,48 @@ struct LearnView: View {
             content
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .onChange(of: state.currentIndex) { _ in
-            state.savePosition()
-        }
-        .sheet(isPresented: $isSharing) {
-            if let shareImage = shareImage {
-                ShareSheet(items: [shareImage])
+        .overlay(alignment: .bottom) {
+            if !hasSeenSwipeHint && state.idioms.count > 1 {
+                swipeHint
             }
         }
+        .onChange(of: state.currentIndex) { _ in
+            state.savePosition()
+            // 第一次翻页即视为已学会滑动，提示不再出现
+            if !hasSeenSwipeHint {
+                hasSeenSwipeHint = true
+            }
+        }
+        .sheet(item: $shareItem) { item in
+            ShareSheet(items: [item.image])
+        }
+    }
+
+    /// 首次安装滑动提示：不拦截手势（allowsHitTesting false），只在底部漂浮，
+    /// 左右箭头来回轻移，翻页后自动消失。
+    private var swipeHint: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "chevron.left")
+                .foregroundColor(.accentRed)
+            Text("Swipe to explore more idioms")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(.ink)
+            Image(systemName: "chevron.right")
+                .foregroundColor(.accentRed)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color.cardBg)
+        .cornerRadius(999)
+        .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
+        .offset(x: hintNudge ? 6 : -6)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.7).repeatForever(autoreverses: true)) {
+                hintNudge = true
+            }
+        }
+        .allowsHitTesting(false)
+        .padding(.bottom, 36)
     }
 
     private var header: some View {
@@ -68,12 +105,11 @@ struct LearnView: View {
         return !(idiom.definitionZh ?? "").isEmpty && !(idiom.definitionEn ?? "").isEmpty
     }
 
-    /// 点击时才渲染分享卡（1080×1350），生成成功才弹面板
+    /// 点击时才渲染分享卡（1080×1350），生成成功才以 item 驱动面板（见 ShareItem 注释）
     private func shareCurrentIdiom() {
         guard let idiom = state.currentIdiom, canShareCurrent else { return }
-        shareImage = ShareCardRenderer.render(IdiomShareCard(idiom: idiom))
-        if shareImage != nil {
-            isSharing = true
+        if let image = ShareCardRenderer.render(IdiomShareCard(idiom: idiom)) {
+            shareItem = ShareItem(image: image)
         }
     }
 

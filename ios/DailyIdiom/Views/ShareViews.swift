@@ -10,6 +10,10 @@ enum ShareCardRenderer {
         let controller = UIHostingController(
             rootView: view.frame(width: cardSize.width, height: cardSize.height)
         )
+        // 离屏渲染要点：frame 与 bounds 都给到画布尺寸（只给 bounds 时部分布局路径仍按零 frame 走）；
+        // drawHierarchy 必须用 afterScreenUpdates: false——该控制器从未进窗口，没有屏幕刷新周期可等，
+        // 用 true 会让首次绘制推迟到一个永远不到来的刷新点，出来就是一张空白图。
+        controller.view.frame = CGRect(origin: .zero, size: cardSize)
         controller.view.bounds = CGRect(origin: .zero, size: cardSize)
         controller.view.backgroundColor = UIColor(red: 250 / 255, green: 248 / 255, blue: 244 / 255, alpha: 1)
         controller.view.setNeedsLayout()
@@ -19,9 +23,18 @@ enum ShareCardRenderer {
         format.opaque = true
         let renderer = UIGraphicsImageRenderer(size: cardSize, format: format)
         return renderer.image { _ in
-            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: false)
         }
     }
+}
+
+/// 分享项：图片生成成功后才驱动 sheet 呈现（修首次分享白屏）。
+/// 原先 isSharing 与 shareImage 两个状态在同一次点击里先后变更，sheet 首次展开时内容闭包
+/// 可能读到变更前的 nil，呈现空白页；退出重进时图片已留存（从不清零）才正常。
+/// 改成单状态 item 驱动：只有图片就绪才会展开，内容不可能为空；关闭时 item 自动清零，不留过期图片。
+struct ShareItem: Identifiable {
+    let id = UUID()
+    let image: UIImage
 }
 
 /// 系统分享面板包装：UIActivityViewController。

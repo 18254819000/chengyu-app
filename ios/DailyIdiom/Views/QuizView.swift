@@ -7,8 +7,7 @@ struct QuizView: View {
     @EnvironmentObject var state: AppState
     @StateObject private var engine = QuizEngine()
 
-    @State private var shareImage: UIImage?
-    @State private var isSharing = false
+    @State private var shareItem: ShareItem?
 
     /// 答对绿（Theme 无绿色 token，测试页局部定义）
     private let correctGreen = Color(red: 46 / 255, green: 125 / 255, blue: 50 / 255)
@@ -28,10 +27,8 @@ struct QuizView: View {
         .background(Color.paperBg.ignoresSafeArea())
         .navigationTitle("Chengyu Quiz")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $isSharing) {
-            if let shareImage = shareImage {
-                ShareSheet(items: [shareImage])
-            }
+        .sheet(item: $shareItem) { item in
+            ShareSheet(items: [item.image])
         }
     }
 
@@ -398,9 +395,8 @@ struct QuizView: View {
             total: engine.totalCount,
             date: Date()
         )
-        shareImage = ShareCardRenderer.render(card)
-        if shareImage != nil {
-            isSharing = true
+        if let image = ShareCardRenderer.render(card) {
+            shareItem = ShareItem(image: image)
         }
     }
 }

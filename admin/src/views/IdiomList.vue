@@ -11,7 +11,19 @@
       <div class="spacer" />
       <span class="free-note">当前免费数量：前 {{ freeCount }} 个（在参数配置中修改）</span>
       <el-button type="primary" @click="router.push('/idioms/new')">新增成语</el-button>
+      <el-button type="success" :loading="publishing" @click="publishAll">一键发布</el-button>
     </div>
+
+    <el-card v-if="publishReport" class="report">
+      <div class="summary">
+        一键发布完成：共 {{ publishReport.total }} 条草稿，成功 <b class="ok">{{ publishReport.published }}</b> 条，失败 <b class="bad">{{ publishReport.failedCount }}</b> 条。
+      </div>
+      <el-table v-if="publishReport.failed && publishReport.failed.length" :data="publishReport.failed" border>
+        <el-table-column prop="idiom" label="成语" width="140" />
+        <el-table-column prop="reason" label="未发布原因" />
+      </el-table>
+      <div v-else class="ok">全部发布成功。</div>
+    </el-card>
 
     <el-table :data="items" v-loading="loading" border style="width: 100%">
       <el-table-column prop="sort_order" label="排序" width="70" />
@@ -72,6 +84,8 @@ const q = ref('');
 const status = ref('');
 const loading = ref(false);
 const freeCount = ref(20);
+const publishing = ref(false);
+const publishReport = ref<any>(null);
 
 function formatTime(t: string) {
   return t ? new Date(t).toLocaleString('zh-CN', { hour12: false }) : '';
@@ -106,6 +120,42 @@ async function publish(row: any) {
     load();
   } catch (e: any) {
     ElMessage.error(e.message);
+  }
+}
+async function publishAll() {
+  let draftTotal = 0;
+  try {
+    const c = await api('/admin/idioms?page=1&pageSize=1&status=draft');
+    draftTotal = c.total || 0;
+  } catch (e: any) {
+    ElMessage.error(e.message);
+    return;
+  }
+  if (!draftTotal) {
+    ElMessage.info('没有草稿可发布');
+    return;
+  }
+  try {
+    await ElMessageBox.confirm(
+      `确定一键发布全部 ${draftTotal} 条草稿吗？校验不通过的会留在草稿并在下方逐条报告原因。`,
+      '一键发布',
+      { type: 'success', confirmButtonText: '发布', cancelButtonText: '取消' },
+    );
+  } catch (e: any) {
+    if (e === 'cancel' || e === 'close') return;
+    ElMessage.error(e?.message || '操作取消');
+    return;
+  }
+  publishing.value = true;
+  try {
+    const r = await api('/admin/idioms/publish-all', { method: 'POST' });
+    publishReport.value = r;
+    ElMessage.success(`一键发布完成：成功 ${r.published} 条，失败 ${r.failedCount} 条`);
+    load();
+  } catch (e: any) {
+    ElMessage.error(e.message);
+  } finally {
+    publishing.value = false;
   }
 }
 async function unpublish(row: any) {
@@ -147,4 +197,6 @@ onMounted(async () => {
 .free-note { color: #9aa1a9; font-size: 13px; }
 .dim { color: #9aa1a9; }
 .pager { margin-top: 16px; justify-content: flex-end; }
+.report { margin-bottom: 16px; }
+.summary { margin-bottom: 14px; font-size: 14px; }
 </style>

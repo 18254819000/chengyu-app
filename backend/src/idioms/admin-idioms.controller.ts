@@ -162,6 +162,34 @@ export class AdminIdiomsController {
     return adminView(updated, await this.config.getFreeCount());
   }
 
+  // POST /api/v1/admin/idioms/publish-all 一键发布全部草稿
+  // 逐条复用单个发布的严格校验：不通过的留在草稿并逐条报告原因；
+  // 整批只 bump 一次 content_version，App 的新成语提醒一整批只弹一次
+  @Post('publish-all')
+  async publishAll() {
+    const drafts = await this.prisma.idiom.findMany({
+      where: { deleted: false, status: 'draft' },
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+    });
+    const failed: Array<{ id: number; idiom: string; reason: string }> = [];
+    let published = 0;
+    for (const row of drafts) {
+      const reasons = publishValidation(row);
+      if (reasons.length) {
+        failed.push({ id: row.id, idiom: row.idiom, reason: reasons.join('；') });
+        continue;
+      }
+      try {
+        await this.prisma.idiom.update({ where: { id: row.id }, data: { status: 'published' } });
+        published++;
+      } catch (err: any) {
+        failed.push({ id: row.id, idiom: row.idiom, reason: `发布失败：${err?.message || '未知错误'}` });
+      }
+    }
+    if (published > 0) await this.config.bumpContentVersion();
+    return { total: drafts.length, published, failedCount: failed.length, failed };
+  }
+
   // POST /api/v1/admin/idioms/:id/unpublish 下架
   @Post(':id/unpublish')
   async unpublish(@Param('id', ParseIntPipe) id: number) {
