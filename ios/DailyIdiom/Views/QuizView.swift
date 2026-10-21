@@ -209,7 +209,8 @@ struct QuizView: View {
         let units = idiom.displayUnits
         let charSize: CGFloat = {
             let n = units.count
-            return n <= 5 ? 46 : n == 6 ? 42 : 38
+            if n <= 5 { return 46 }
+            return min(42, (319 - 4 * CGFloat(n - 1)) / CGFloat(n))
         }()
         return Group {
             if idiom.charPinyins.count == idiom.hanChars.count {

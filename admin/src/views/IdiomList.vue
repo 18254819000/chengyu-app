@@ -29,6 +29,18 @@
       <el-table-column prop="sort_order" label="排序" width="70" />
       <el-table-column prop="idiom" label="成语" width="120" />
       <el-table-column prop="pinyin" label="拼音" min-width="170" />
+      <el-table-column label="分类" width="110">
+        <template #default="{ row }">
+          <span v-if="row.tags">{{ row.tags }}</span>
+          <span v-else class="dim">—</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="故事" width="80">
+        <template #default="{ row }">
+          <el-tag v-if="row.story_zh" type="success">有</el-tag>
+          <span v-else class="dim">无</span>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" width="90">
         <template #default="{ row }">
           <el-tag v-if="row.status === 'published'" type="success">已发布</el-tag>

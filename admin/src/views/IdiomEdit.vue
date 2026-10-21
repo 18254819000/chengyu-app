@@ -32,6 +32,12 @@
         <el-form-item label="例句英文翻译" required>
           <el-input v-model="form.example_en" type="textarea" :rows="2" />
         </el-form-item>
+        <el-form-item label="典源与故事">
+          <el-input v-model="form.story_zh" type="textarea" :rows="4" placeholder="可空，中文典源与故事" />
+        </el-form-item>
+        <el-form-item label="英文故事">
+          <el-input v-model="form.story_en" type="textarea" :rows="4" placeholder="可空，与中文故事成对" />
+        </el-form-item>
         <el-form-item label="出处（预留）">
           <el-input v-model="form.source" placeholder="可空，第一版不在 App 展示" />
         </el-form-item>
@@ -92,6 +98,8 @@ const form = reactive<any>({
   definition_en: '',
   example_zh: '',
   example_en: '',
+  story_zh: '',
+  story_en: '',
   source: '',
   tags: '',
   admin_remark: '',
@@ -115,6 +123,8 @@ onMounted(async () => {
         definition_en: r.definition_en,
         example_zh: r.example_zh,
         example_en: r.example_en,
+        story_zh: r.story_zh || '',
+        story_en: r.story_en || '',
         source: r.source || '',
         tags: r.tags || '',
         admin_remark: r.admin_remark || '',

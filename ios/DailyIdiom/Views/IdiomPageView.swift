@@ -55,10 +55,11 @@ struct IdiomDetailView: View {
         }
     }
 
-    /// 详情字号：按排版单元数缩放，保证 375 宽以上机型上首尾字不被裁（5 单元 54、6 单元 49、7 单元及以上 42）
+    /// 详情字号：按排版单元数缩放，保证 375 宽以上机型上首尾字不被裁（5 单元 54，之后按内容区 319 宽反推：6 单元 49、7 单元 42、10 单元约 28）
     private var charSize: CGFloat {
         let n = idiom.displayUnits.count
-        return n <= 5 ? 54 : n == 6 ? 49 : 42
+        if n <= 5 { return 54 }
+        return min(49, (319 - 4 * CGFloat(n - 1)) / CGFloat(n))
     }
 
     /// 逐字对齐：每个汉字一个纵向单元（拼音在上、汉字在下），等距排布；
@@ -177,10 +178,11 @@ struct LockedIdiomView: View {
         .frame(maxWidth: .infinity)
     }
 
-    /// 锁定页字号：与详情页同口径缩放（5 单元 54、6 单元 49、7 单元及以上 42）
+    /// 锁定页字号：与详情页同口径缩放（5 单元 54，之后按内容区 319 宽反推）
     private var charSize: CGFloat {
         let n = idiom.displayUnits.count
-        return n <= 5 ? 54 : n == 6 ? 49 : 42
+        if n <= 5 { return 54 }
+        return min(49, (319 - 4 * CGFloat(n - 1)) / CGFloat(n))
     }
 
     private var pinyinUnits: some View {
