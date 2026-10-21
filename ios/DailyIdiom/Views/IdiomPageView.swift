@@ -55,23 +55,29 @@ struct IdiomDetailView: View {
         }
     }
 
-    /// 逐字对齐：每个汉字一个纵向单元（拼音在上、汉字在下），等距排布
+    /// 详情字号：按排版单元数缩放，保证 375 宽以上机型上首尾字不被裁（5 单元 54、6 单元 49、7 单元及以上 42）
+    private var charSize: CGFloat {
+        let n = idiom.displayUnits.count
+        return n <= 5 ? 54 : n == 6 ? 49 : 42
+    }
+
+    /// 逐字对齐：每个汉字一个纵向单元（拼音在上、汉字在下），等距排布；
+    /// 带标点成语按 displayUnits 排，标点作分隔符（空白占拼音位、贴底对齐）
     private var pinyinUnits: some View {
-        let chars = Array(idiom.idiom)
-        let pinyins = idiom.charPinyins
+        let units = idiom.displayUnits
         return Group {
-            if pinyins.count == chars.count {
+            if idiom.charPinyins.count == idiom.hanChars.count {
                 HStack(alignment: .top, spacing: 0) {
-                    ForEach(Array(chars.enumerated()), id: \.offset) { item in
+                    ForEach(Array(units.enumerated()), id: \.offset) { item in
                         VStack(spacing: 7) {
-                            Text(pinyins[item.offset])
+                            Text(item.element.pinyin ?? " ")
                                 .font(.system(size: 15, design: .serif))
                                 .foregroundColor(.ink2)
-                            Text(String(item.element))
-                                .font(.system(size: 54, weight: .semibold))
+                            Text(item.element.text)
+                                .font(.system(size: charSize, weight: .semibold))
                                 .foregroundColor(.ink)
                         }
-                        if item.offset < chars.count - 1 {
+                        if item.offset < units.count - 1 {
                             Spacer(minLength: 4)
                         }
                     }
@@ -83,7 +89,7 @@ struct IdiomDetailView: View {
                         .font(.system(size: 15, design: .serif))
                         .foregroundColor(.ink2)
                     Text(idiom.idiom)
-                        .font(.system(size: 54, weight: .semibold))
+                        .font(.system(size: charSize, weight: .semibold))
                         .foregroundColor(.ink)
                 }
             }
@@ -171,22 +177,27 @@ struct LockedIdiomView: View {
         .frame(maxWidth: .infinity)
     }
 
+    /// 锁定页字号：与详情页同口径缩放（5 单元 54、6 单元 49、7 单元及以上 42）
+    private var charSize: CGFloat {
+        let n = idiom.displayUnits.count
+        return n <= 5 ? 54 : n == 6 ? 49 : 42
+    }
+
     private var pinyinUnits: some View {
-        let chars = Array(idiom.idiom)
-        let pinyins = idiom.charPinyins
+        let units = idiom.displayUnits
         return Group {
-            if pinyins.count == chars.count {
+            if idiom.charPinyins.count == idiom.hanChars.count {
                 HStack(alignment: .top, spacing: 0) {
-                    ForEach(Array(chars.enumerated()), id: \.offset) { item in
+                    ForEach(Array(units.enumerated()), id: \.offset) { item in
                         VStack(spacing: 7) {
-                            Text(pinyins[item.offset])
+                            Text(item.element.pinyin ?? " ")
                                 .font(.system(size: 15, design: .serif))
                                 .foregroundColor(.ink2)
-                            Text(String(item.element))
-                                .font(.system(size: 54, weight: .semibold))
+                            Text(item.element.text)
+                                .font(.system(size: charSize, weight: .semibold))
                                 .foregroundColor(.ink2)
                         }
-                        if item.offset < chars.count - 1 {
+                        if item.offset < units.count - 1 {
                             Spacer(minLength: 4)
                         }
                     }
@@ -197,7 +208,7 @@ struct LockedIdiomView: View {
                         .font(.system(size: 15, design: .serif))
                         .foregroundColor(.ink2)
                     Text(idiom.idiom)
-                        .font(.system(size: 54, weight: .semibold))
+                        .font(.system(size: charSize, weight: .semibold))
                         .foregroundColor(.ink2)
                 }
             }

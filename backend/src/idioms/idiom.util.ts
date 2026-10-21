@@ -29,6 +29,22 @@ export function charCount(s: string): number {
   return [...(s || '')].length;
 }
 
+/// 汉字数：只计 CJK 表意文字，标点（如 ，）不计入。
+/// 带标点成语（如 狡兔死，良狗烹）的逐字拼音按汉字数对齐，标点不占拼音位。
+export function hanCount(s: string): number {
+  let n = 0;
+  for (const ch of s || '') {
+    const cp = ch.codePointAt(0) ?? 0;
+    if (
+      (cp >= 0x3400 && cp <= 0x4dbf) ||
+      (cp >= 0x4e00 && cp <= 0x9fff) ||
+      (cp >= 0xf900 && cp <= 0xfaff) ||
+      (cp >= 0x20000 && cp <= 0x2a6df)
+    ) n++;
+  }
+  return n;
+}
+
 // 发布校验：必填齐全 + 逐字拼音个数与汉字数一致。返回不通过原因列表（空 = 通过）
 export function publishValidation(data: {
   idiom: string;
@@ -54,8 +70,8 @@ export function publishValidation(data: {
   const parts = splitPinyinChars(data.pinyinChars);
   if (parts.length === 0) {
     reasons.push('缺少必填字段：逐字拼音');
-  } else if (data.idiom && parts.length !== charCount(data.idiom.trim())) {
-    reasons.push(`逐字拼音个数（${parts.length}）与成语汉字数（${charCount(data.idiom.trim())}）不一致`);
+  } else if (data.idiom && parts.length !== hanCount(data.idiom.trim())) {
+    reasons.push(`逐字拼音个数（${parts.length}）与成语汉字数（${hanCount(data.idiom.trim())}）不一致`);
   }
   return reasons;
 }

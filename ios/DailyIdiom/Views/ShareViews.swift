@@ -125,23 +125,30 @@ struct IdiomShareCard: View {
         .background(Color.paperBg)
     }
 
-    /// 逐字对齐：拼音在上、汉字在下，与详情页同式；逐字拼音缺失 / 数量不对时退回完整拼音
+    /// 分享卡汉字字号：卡片内容区宽 896（1080 减两侧各 92 边距），字间最小 8；
+    /// 四字沿用 196，五字 172、六字 142，字数再多也不裁边（写死 196 时六字需 1216，超出后首尾字被裁）。
+    private var charFontSize: CGFloat {
+        let count = max(idiom.idiom.count, 1)
+        return min(196, (896 - CGFloat(count - 1) * 8) / CGFloat(count))
+    }
+
+    /// 逐字对齐：拼音在上、汉字在下，与详情页同式；带标点成语按 displayUnits 排，标点作分隔符；
+    /// 逐字拼音缺失 / 数量不对时退回完整拼音
     private var pinyinUnits: some View {
-        let chars = Array(idiom.idiom)
-        let pinyins = idiom.charPinyins
+        let units = idiom.displayUnits
         return Group {
-            if pinyins.count == chars.count {
+            if idiom.charPinyins.count == idiom.hanChars.count {
                 HStack(alignment: .top, spacing: 0) {
-                    ForEach(Array(chars.enumerated()), id: \.offset) { item in
+                    ForEach(Array(units.enumerated()), id: \.offset) { item in
                         VStack(spacing: 16) {
-                            Text(pinyins[item.offset])
+                            Text(item.element.pinyin ?? " ")
                                 .font(.system(size: 40, design: .serif))
                                 .foregroundColor(.ink2)
-                            Text(String(item.element))
-                                .font(.system(size: 196, weight: .semibold))
+                            Text(item.element.text)
+                                .font(.system(size: charFontSize, weight: .semibold))
                                 .foregroundColor(.ink)
                         }
-                        if item.offset < chars.count - 1 {
+                        if item.offset < units.count - 1 {
                             Spacer(minLength: 8)
                         }
                     }
@@ -152,7 +159,7 @@ struct IdiomShareCard: View {
                         .font(.system(size: 40, design: .serif))
                         .foregroundColor(.ink2)
                     Text(idiom.idiom)
-                        .font(.system(size: 196, weight: .semibold))
+                        .font(.system(size: charFontSize, weight: .semibold))
                         .foregroundColor(.ink)
                 }
             }

@@ -62,6 +62,33 @@ struct Idiom: Codable, Identifiable, Equatable {
         if let chars = pinyinChars, !chars.isEmpty { return chars }
         return pinyin.split(separator: " ").map(String.init)
     }
+
+    /// 汉字序列：成语中除标点外的汉字，与逐字拼音一一对应
+    var hanChars: [Character] {
+        idiom.compactMap { isHanCharacter($0) ? $0 : nil }
+    }
+
+    /// 排版单元：汉字带对应拼音，标点（，、）作分隔符（pinyin 为 nil，排版时以空白占拼音位、贴底对齐）。
+    /// 仅在 charPinyins.count == hanChars.count 时使用，否则调用方走整词兜底排版。
+    var displayUnits: [(text: String, pinyin: String?)] {
+        var units: [(text: String, pinyin: String?)] = []
+        var pinyinIndex = 0
+        for ch in idiom {
+            if isHanCharacter(ch) {
+                units.append((text: String(ch), pinyin: pinyinIndex < charPinyins.count ? charPinyins[pinyinIndex] : nil))
+                pinyinIndex += 1
+            } else {
+                units.append((text: String(ch), pinyin: nil))
+            }
+        }
+        return units
+    }
+}
+
+/// 是否汉字（CJK 表意文字区段，含扩展 A/B 与兼容区）
+func isHanCharacter(_ ch: Character) -> Bool {
+    guard let v = ch.unicodeScalars.first?.value else { return false }
+    return (0x3400...0x4DBF).contains(v) || (0x4E00...0x9FFF).contains(v) || (0xF900...0xFAFF).contains(v) || (0x20000...0x2A6DF).contains(v)
 }
 
 /// GET /idioms 分页响应

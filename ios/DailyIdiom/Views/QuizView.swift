@@ -203,23 +203,27 @@ struct QuizView: View {
         }
     }
 
-    /// 简单档题面：逐字拼音 + 成语（与详情页同式，字号略小）
+    /// 简单档题面：逐字拼音 + 成语（与详情页同式，字号略小）；
+    /// 题面字号按排版单元数缩放（5 单元 46、6 单元 42、7 单元及以上 38），带标点成语按 displayUnits 排
     private func subjectHead(_ idiom: Idiom) -> some View {
-        let chars = Array(idiom.idiom)
-        let pinyins = idiom.charPinyins
+        let units = idiom.displayUnits
+        let charSize: CGFloat = {
+            let n = units.count
+            return n <= 5 ? 46 : n == 6 ? 42 : 38
+        }()
         return Group {
-            if pinyins.count == chars.count {
+            if idiom.charPinyins.count == idiom.hanChars.count {
                 HStack(alignment: .top, spacing: 0) {
-                    ForEach(Array(chars.enumerated()), id: \.offset) { item in
+                    ForEach(Array(units.enumerated()), id: \.offset) { item in
                         VStack(spacing: 6) {
-                            Text(pinyins[item.offset])
+                            Text(item.element.pinyin ?? " ")
                                 .font(.system(size: 14, design: .serif))
                                 .foregroundColor(.ink2)
-                            Text(String(item.element))
-                                .font(.system(size: 46, weight: .semibold))
+                            Text(item.element.text)
+                                .font(.system(size: charSize, weight: .semibold))
                                 .foregroundColor(.ink)
                         }
-                        if item.offset < chars.count - 1 {
+                        if item.offset < units.count - 1 {
                             Spacer(minLength: 4)
                         }
                     }
@@ -230,7 +234,7 @@ struct QuizView: View {
                         .font(.system(size: 14, design: .serif))
                         .foregroundColor(.ink2)
                     Text(idiom.idiom)
-                        .font(.system(size: 46, weight: .semibold))
+                        .font(.system(size: charSize, weight: .semibold))
                         .foregroundColor(.ink)
                 }
             }
