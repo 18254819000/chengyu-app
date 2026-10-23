@@ -55,45 +55,113 @@ struct Provider: TimelineProvider {
     }
 }
 
-/// 组件视图，严格按 UI 定稿极简版：只有成语大字、细线（左侧朱红短段）、英文解释。
-/// 解释只展示英文（中英双语在小组件里放不下、会被截断）；无标题、无拼音、无底部文字、无按钮；
+/// 组件视图，严格按 UI 定稿极简版：成语大字、细线（左侧朱红短段）、解释；无标题、无拼音、无底部文字、无按钮；
 /// 点击整体经 widgetURL 直达 App 内该成语详情页。
+/// 中号：成语大字 + 英文解释（3 行，行距收紧后中号高度内放得下 3 行英文）。
+/// 大号 / 超大号：成语大字 + 中文解释 + 英文解释，中英文行数都放开（中文 6 行、英文 8 行），
+/// 正常长度的释义都能完整显示，不再只截取英文。
 struct DailyIdiomWidgetView: View {
     var entry: DailyEntry
+    @Environment(\.widgetFamily) private var family
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 0) {
-                let chars = Array(entry.daily.idiom)
-                ForEach(Array(chars.enumerated()), id: \.offset) { item in
-                    Text(String(item.element))
-                        .font(.system(size: 34, weight: .semibold))
-                        .foregroundColor(.ink)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                    if item.offset < chars.count - 1 {
-                        Spacer(minLength: 4)
-                    }
+        Group {
+            if family == .systemLarge || family == .systemExtraLarge {
+                largeView
+            } else {
+                mediumView
+            }
+        }
+        .modifier(WidgetBackgroundModifier())
+        .widgetURL(URL(string: "\(AppConfig.urlScheme)://idiom/\(entry.daily.id)"))
+    }
+
+    /// 成语大字行：逐字排布、字间留空，字数多时自动缩小不换行。
+    private func idiomRow(size: CGFloat) -> some View {
+        HStack(spacing: 0) {
+            let chars = Array(entry.daily.idiom)
+            ForEach(Array(chars.enumerated()), id: \.offset) { item in
+                Text(String(item.element))
+                    .font(.system(size: size, weight: .semibold))
+                    .foregroundColor(.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                if item.offset < chars.count - 1 {
+                    Spacer(minLength: 4)
                 }
             }
+        }
+    }
+
+    /// 锁定成语的提示：后端锁定时不再下发释义（与 App 内锁定页同口径），小组件不再留空白释义区，
+    /// 而是明示需订阅，避免“小组件有释义、点进 App 却打不开”的前后不一致。
+    private var lockedHint: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "lock")
+                .font(.system(size: 12, weight: .semibold))
+            Text("Subscribers Only")
+                .font(.system(size: 12, weight: .medium))
+        }
+        .foregroundColor(.ink3)
+        .padding(.top, 8)
+    }
+
+    private var mediumView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            idiomRow(size: 34)
 
             AccentDivider()
-                .padding(.top, 10)
-
-            Text(entry.daily.definitionEn ?? "")
-                .font(.system(size: 12, design: .serif))
-                .foregroundColor(.ink2)
-                .lineSpacing(4)
-                .lineLimit(4)
                 .padding(.top, 8)
+
+            if entry.daily.locked {
+                lockedHint
+            } else {
+                Text(entry.daily.definitionEn ?? "")
+                    .font(.system(size: 12, design: .serif))
+                    .foregroundColor(.ink2)
+                    .lineSpacing(3)
+                    .lineLimit(3)
+                    .padding(.top, 8)
+            }
 
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .modifier(WidgetBackgroundModifier())
-        .widgetURL(URL(string: "\(AppConfig.urlScheme)://idiom/\(entry.daily.id)"))
+    }
+
+    private var largeView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            idiomRow(size: 40)
+
+            AccentDivider()
+                .padding(.top, 12)
+
+            if entry.daily.locked {
+                lockedHint
+                    .padding(.top, 2)
+            } else {
+                Text(entry.daily.definitionZh ?? "")
+                    .font(.system(size: 14))
+                    .foregroundColor(.ink)
+                    .lineSpacing(3)
+                    .lineLimit(6)
+                    .padding(.top, 10)
+
+                Text(entry.daily.definitionEn ?? "")
+                    .font(.system(size: 13, design: .serif))
+                    .foregroundColor(.ink2)
+                    .lineSpacing(3)
+                    .lineLimit(8)
+                    .padding(.top, 10)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
@@ -117,7 +185,7 @@ struct DailyIdiomWidget: Widget {
         }
         .configurationDisplayName("Daily Chengyu")
         .description("A new Chinese idiom every day")
-        .supportedFamilies([.systemMedium])
+        .supportedFamilies([.systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
 

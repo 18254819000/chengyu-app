@@ -106,6 +106,8 @@ export function lockedView(row: any) {
 }
 
 // 小组件/App 每日成语公开视图（不含例句）
+// 锁定时不下发释义（与 lockedView 同口径）：此前 locked=true 时仍带完整中英文释义，
+// 小组件会把订阅内容免费展示给非订阅用户，而 App 内点进却是锁定页，前后不一致。
 export function dailyView(row: any, date: string, locked: boolean) {
   return {
     date,
@@ -113,8 +115,8 @@ export function dailyView(row: any, date: string, locked: boolean) {
     idiom: row.idiom,
     pinyin: row.pinyin,
     pinyin_chars: splitPinyinChars(row.pinyinChars),
-    definition_zh: row.definitionZh,
-    definition_en: row.definitionEn,
+    definition_zh: locked ? '' : row.definitionZh,
+    definition_en: locked ? '' : row.definitionEn,
     sort_order: row.sortOrder,
     locked,
   };
