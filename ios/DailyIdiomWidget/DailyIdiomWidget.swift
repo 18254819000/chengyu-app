@@ -93,19 +93,6 @@ struct DailyIdiomWidgetView: View {
         }
     }
 
-    /// 锁定成语的提示：后端锁定时不再下发释义（与 App 内锁定页同口径），小组件不再留空白释义区，
-    /// 而是明示需订阅，避免“小组件有释义、点进 App 却打不开”的前后不一致。
-    private var lockedHint: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "lock")
-                .font(.system(size: 12, weight: .semibold))
-            Text("Subscribers Only")
-                .font(.system(size: 12, weight: .medium))
-        }
-        .foregroundColor(.ink3)
-        .padding(.top, 8)
-    }
-
     private var mediumView: some View {
         VStack(alignment: .leading, spacing: 0) {
             idiomRow(size: 34)
@@ -113,16 +100,12 @@ struct DailyIdiomWidgetView: View {
             AccentDivider()
                 .padding(.top, 8)
 
-            if entry.daily.locked {
-                lockedHint
-            } else {
-                Text(entry.daily.definitionEn ?? "")
-                    .font(.system(size: 12, design: .serif))
-                    .foregroundColor(.ink2)
-                    .lineSpacing(3)
-                    .lineLimit(3)
-                    .padding(.top, 8)
-            }
+            Text(entry.daily.definitionEn ?? "")
+                .font(.system(size: 12, design: .serif))
+                .foregroundColor(.ink2)
+                .lineSpacing(3)
+                .lineLimit(3)
+                .padding(.top, 8)
 
             Spacer(minLength: 0)
         }
@@ -138,24 +121,19 @@ struct DailyIdiomWidgetView: View {
             AccentDivider()
                 .padding(.top, 12)
 
-            if entry.daily.locked {
-                lockedHint
-                    .padding(.top, 2)
-            } else {
-                Text(entry.daily.definitionZh ?? "")
-                    .font(.system(size: 14))
-                    .foregroundColor(.ink)
-                    .lineSpacing(3)
-                    .lineLimit(6)
-                    .padding(.top, 10)
+            Text(entry.daily.definitionZh ?? "")
+                .font(.system(size: 14))
+                .foregroundColor(.ink)
+                .lineSpacing(3)
+                .lineLimit(6)
+                .padding(.top, 10)
 
-                Text(entry.daily.definitionEn ?? "")
-                    .font(.system(size: 13, design: .serif))
-                    .foregroundColor(.ink2)
-                    .lineSpacing(3)
-                    .lineLimit(8)
-                    .padding(.top, 10)
-            }
+            Text(entry.daily.definitionEn ?? "")
+                .font(.system(size: 13, design: .serif))
+                .foregroundColor(.ink2)
+                .lineSpacing(3)
+                .lineLimit(8)
+                .padding(.top, 10)
 
             Spacer(minLength: 0)
         }

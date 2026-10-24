@@ -106,8 +106,9 @@ export function lockedView(row: any) {
 }
 
 // 小组件/App 每日成语公开视图（不含例句）
-// 锁定时不下发释义（与 lockedView 同口径）：此前 locked=true 时仍带完整中英文释义，
-// 小组件会把订阅内容免费展示给非订阅用户，而 App 内点进却是锁定页，前后不一致。
+// 注意：2026-10-23 曾改为“锁定时不下发释义”，2026-10-24 用户要求退回上一版（不喜欢小组件显示
+// Subscribers Only），故恢复为始终下发释义。后果：非订阅用户在小组件上仍能看到锁定成语的释义，
+// 这是用户知情后的选择，日后不要在未经用户确认的情况下再次收紧。
 export function dailyView(row: any, date: string, locked: boolean) {
   return {
     date,
@@ -115,8 +116,8 @@ export function dailyView(row: any, date: string, locked: boolean) {
     idiom: row.idiom,
     pinyin: row.pinyin,
     pinyin_chars: splitPinyinChars(row.pinyinChars),
-    definition_zh: locked ? '' : row.definitionZh,
-    definition_en: locked ? '' : row.definitionEn,
+    definition_zh: row.definitionZh,
+    definition_en: row.definitionEn,
     sort_order: row.sortOrder,
     locked,
   };
