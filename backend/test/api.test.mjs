@@ -53,23 +53,25 @@ async function main() {
   // ---------- App 列表与锁定 ----------
   const list = await req('GET', '/idioms?page=1&pageSize=200');
   check('App 列表只含已发布成语共 30 条', list.status === 200 && list.json.total === 30, `total=${list.json?.total}`);
-  // 列表已按 sort_order 升序返回；锁定条目按规范只有极少字段，用位置定位（下标 19=第20条，20=第21条）
+  // 新免费模型（2026-10-27）：非订阅用户仅当日成语解锁；列表已按 sort_order 升序返回
   const bySort = list.json.items;
-  const item21 = bySort[20];
-  const item20 = bySort[19];
-  check('第 20 条免费可读（带释义）', item20 && item20.locked === false && !!item20.definition_zh);
-  check('第 21 条 locked=true', item21 && item21.locked === true);
-  check('锁定条目不含释义与例句字段',
-    item21 && !('definition_zh' in item21) && !('definition_en' in item21) && !('example_zh' in item21));
+  const dailyToday = await req('GET', '/daily');
+  const unlockedItems = list.json.items.filter((i) => i.locked === false);
+  check('非订阅用户列表仅当日成语解锁',
+    unlockedItems.length === 1 && unlockedItems[0].id === dailyToday.json.id,
+    `unlocked=${unlockedItems.map((i) => i.idiom).join(',')} daily=${dailyToday.json?.idiom}`);
+  const lockedItem = list.json.items.find((i) => i.locked === true);
+  check('非当日条目 locked=true 且不含释义与例句字段',
+    lockedItem && !('definition_zh' in lockedItem) && !('definition_en' in lockedItem) && !('example_zh' in lockedItem));
 
-  const detail403 = await req('GET', `/idioms/${item21.id}`);
-  check('付费详情匿名访问返回 403', detail403.status === 403, `status=${detail403.status}`);
+  const detail403 = await req('GET', `/idioms/${lockedItem.id}`);
+  check('非当日详情匿名访问返回 403', detail403.status === 403, `status=${detail403.status}`);
   check('403 响应不泄露释义/例句原文',
-    !detail403.text.includes('焉知非福') && !detail403.text.includes('definition_zh') && !detail403.text.includes('example_zh'));
+    !detail403.text.includes('definition_zh') && !detail403.text.includes('example_zh') && detail403.json?.locked === true);
 
-  const detailFree = await req('GET', `/idioms/${item20.id}`);
-  check('免费详情可读且逐字拼音为数组',
-    detailFree.status === 200 && Array.isArray(detailFree.json.pinyin_chars) && detailFree.json.pinyin_chars.length === 4);
+  const detailFree = await req('GET', `/idioms/${dailyToday.json.id}`);
+  check('当日免费详情可读且逐字拼音为数组',
+    detailFree.status === 200 && Array.isArray(detailFree.json.pinyin_chars) && detailFree.json.pinyin_chars.length > 0);
 
   // ---------- daily 公式与稳定性 ----------
   const date = '2026-10-20';
@@ -148,7 +150,7 @@ async function main() {
   const st = await req('GET', '/subscription/status?originalTransactionId=orig-test-1001');
   check('subscription/status 查询到有效权益', st.json?.entitled === true && st.json?.status === 'active');
 
-  const detailUnlocked = await req('GET', `/idioms/${item21.id}`, {
+  const detailUnlocked = await req('GET', `/idioms/${lockedItem.id}`, {
     headers: { 'x-original-transaction-id': 'orig-test-1001' },
   });
   check('开通权益后付费详情可读', detailUnlocked.status === 200 && !!detailUnlocked.json.definition_zh);
@@ -168,19 +170,28 @@ async function main() {
   check('退款后权益失效', stAfterRefund.json?.entitled === false && stAfterRefund.json?.status === 'refunded',
     `status=${stAfterRefund.json?.status}`);
 
-  // ---------- 改 free_count 影响锁定范围 ----------
+  // ---------- today 参数决定当日免费成语 ----------
+  // 用固定日期 2026-10-21（公式测试日的次日）验证，不依赖真实当天日期
+  const dateT = '2026-10-21';
+  const daysT = Math.floor((Date.UTC(2026, 9, 21) - Date.UTC(2026, 0, 1)) / 86400000);
+  const expectedT = bySort[daysT % bySort.length];
+  const listT = await req('GET', `/idioms?page=1&pageSize=200&today=${dateT}`);
+  const unlockedT = listT.json.items.filter((i) => i.locked === false);
+  check('today 参数切换当日免费成语',
+    unlockedT.length === 1 && unlockedT[0].id === expectedT.id,
+    `expected=${expectedT.idiom} got=${unlockedT[0]?.idiom}`);
+
+  // ---------- free_count 变更不再影响锁定 ----------
   const putCfg = await req('PUT', '/admin/config', { token, body: { free_count: 25 } });
   check('后台修改 free_count=25 成功', (putCfg.status === 200) && putCfg.json.free_count === 25);
   const list25 = await req('GET', '/idioms?page=1&pageSize=200');
-  const s21 = list25.json.items[20];
-  const s26 = list25.json.items[25];
-  check('free_count=25 时第 21 条解锁、第 26 条仍锁定', s21.locked === false && s26.locked === true);
+  const unlocked25 = list25.json.items.filter((i) => i.locked === false);
+  check('free_count 变更不影响锁定（仍仅当日成语解锁）',
+    unlocked25.length === 1 && unlocked25[0].id === dailyToday.json.id);
   const cfgAfter = await req('GET', '/config');
   check('free_count 变更后 content_version 自增', cfgAfter.json.content_version > version0,
     `${version0} -> ${cfgAfter.json.content_version}`);
   await req('PUT', '/admin/config', { token, body: { free_count: 20 } });
-  const listRestored = await req('GET', '/idioms?page=1&pageSize=200');
-  check('free_count 恢复 20 后第 21 条重新锁定', listRestored.json.items[20].locked === true);
 
   // ---------- 批量导入错误行报告 ----------
   const csv = [

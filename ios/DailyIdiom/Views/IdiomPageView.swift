@@ -87,6 +87,7 @@ struct IdiomDetailView: View {
     /// 故事入口卡：仅有中文故事时出现，点击全屏 sheet 打开故事页
     private var storyEntry: some View {
         Button {
+            LocalStore.recordStoryRead(id: idiom.id)
             showingStory = true
         } label: {
             HStack(spacing: 13) {

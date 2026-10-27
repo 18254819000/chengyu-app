@@ -3,70 +3,82 @@ import StoreKit
 
 /// 个人中心内容：由首页右上角个人中心入口以 NavigationLink 推入本页。
 /// 调用方（LearnView 的导航目标）负责设置导航标题。
+/// 布局仿 iOS 系统设置：InsetGroupedListStyle 分组列表，按功能分 4 个 section。
 struct SettingsView: View {
     @EnvironmentObject var state: AppState
     @EnvironmentObject var store: StoreManager
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
+        List {
+            Section(header: Text("SUBSCRIPTION")) {
                 subscriptionRow
-                rowDivider
-                actionRow("Restore Purchases", trailing: store.isRestoring ? "Restoring…" : nil) {
+                actionRow(icon: "arrow.clockwise", iconColor: .gray, "Restore Purchases", trailing: store.isRestoring ? "Restoring…" : nil) {
                     Task { await store.restorePurchases() }
                 }
-                rowDivider
-                actionRow("Manage Subscription") {
+                actionRow(icon: "creditcard.fill", iconColor: .blue, "Manage Subscription") {
                     openManageSubscriptions()
                 }
-                rowDivider
-                actionRow("Redeem Code") {
+                actionRow(icon: "gift.fill", iconColor: .purple, "Redeem Code") {
                     SKPaymentQueue.default().presentCodeRedemptionSheet()
                 }
-                rowDivider
+            }
+            Section(header: Text("LEARNING")) {
+                NavigationLink {
+                    CheckInCalendarView()
+                } label: {
+                    rowContent(icon: "flame.fill", iconColor: .orange, title: "Check-in Calendar", trailing: state.streakDays > 0 ? "\(state.streakDays) days" : nil)
+                }
+                NavigationLink {
+                    ReviewView()
+                } label: {
+                    rowContent(icon: "book.fill", iconColor: .green, title: "Review", trailing: nil)
+                }
+                NavigationLink {
+                    LeaderboardView()
+                } label: {
+                    rowContent(icon: "trophy.fill", iconColor: .yellow, title: "Leaderboard", trailing: nil)
+                }
+                NavigationLink {
+                    AchievementsView()
+                } label: {
+                    rowContent(icon: "crown.fill", iconColor: .indigo, title: "Achievements", trailing: nil)
+                }
+            }
+            Section(header: Text("HOME SCREEN")) {
                 NavigationLink {
                     WidgetGuideView()
                 } label: {
-                    rowLabel("Add Widget to Home Screen", trailing: nil)
+                    rowContent(icon: "square.grid.2x2.fill", iconColor: .teal, title: "Add Widget to Home Screen", trailing: nil)
                 }
-                rowDivider
-                actionRow("Privacy Policy") {
-                    openURL(AppConfig.privacyPolicyURL)
+            }
+            Section(header: Text("ABOUT"), footer: Text("Daily Chengyu · Version \(AppConfig.appVersion)")) {
+                actionRow(icon: "lock.fill", iconColor: .blue, "Privacy Policy") {
+                    state.openWeb(AppConfig.privacyPolicyURL)
                 }
-                rowDivider
-                actionRow("Terms of Use") {
-                    openURL(AppConfig.termsOfUseURL)
+                actionRow(icon: "doc.text.fill", iconColor: .gray, "Terms of Use") {
+                    state.openWeb(AppConfig.termsOfUseURL)
                 }
-                rowDivider
-                actionRow("Contact Us") {
+                actionRow(icon: "envelope.fill", iconColor: .pink, "Contact Us") {
                     if let url = URL(string: "mailto:\(AppConfig.supportEmail)") {
                         openURL(url)
                     }
                 }
-                rowDivider
                 NavigationLink {
                     AboutView()
                 } label: {
-                    rowLabel("About Daily Chengyu", trailing: nil)
+                    rowContent(icon: "info.circle.fill", iconColor: .gray, title: "About Daily Chengyu", trailing: nil)
                 }
-                rowDivider
-
-                Text("Daily Chengyu · Version \(AppConfig.appVersion)")
-                    .font(.system(size: 12))
-                    .foregroundColor(.ink3)
-                    .tracking(1)
-                    .padding(.top, 26)
             }
-            .padding(.horizontal, 22)
-            .padding(.top, 6)
         }
-        .background(Color.paperBg.ignoresSafeArea())
-        .alert("Notice", isPresented: messageBinding) {
-            Button("OK") { store.message = nil }
-        } message: {
-            Text(store.message ?? "")
-        }
+        .listStyle(InsetGroupedListStyle())
+        .appDialog(
+            isPresented: messageBinding,
+            title: "Notice",
+            message: store.message ?? "",
+            primaryTitle: "OK",
+            primaryAction: { store.message = nil }
+        )
     }
 
     private var messageBinding: Binding<Bool> {
@@ -86,21 +98,21 @@ struct SettingsView: View {
                 state.showPaywall = true
             }
         } label: {
-            HStack {
+            HStack(spacing: 12) {
+                iconView("star.fill", color: .accentRed)
                 Text("My Subscription")
-                    .font(.system(size: 15))
+                    .font(.system(size: 17))
                     .foregroundColor(.ink)
                 Spacer()
                 Text(subscriptionStatusText)
-                    .font(.system(size: 13))
+                    .font(.system(size: 15))
                     .foregroundColor(state.isEntitled ? .ink3 : .accentRed)
                     .fontWeight(state.isEntitled ? .regular : .semibold)
+                    .lineLimit(1)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.ink3)
             }
-            .padding(.vertical, 16)
-            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
@@ -116,38 +128,43 @@ struct SettingsView: View {
         return "Subscribed"
     }
 
-    // MARK: 通用行
+    // MARK: 通用行（iOS 设置风格：彩色圆角图标 + 标题 + 右侧值 + 箭头）
 
-    private func actionRow(_ title: String, trailing: String? = nil, action: @escaping () -> Void) -> some View {
+    private func actionRow(icon: String, iconColor: Color, _ title: String, trailing: String? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            rowLabel(title, trailing: trailing)
+            HStack {
+                rowContent(icon: icon, iconColor: iconColor, title: title, trailing: trailing)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.ink3)
+            }
         }
         .buttonStyle(.plain)
     }
 
-    private func rowLabel(_ title: String, trailing: String?) -> some View {
-        HStack {
+    private func rowContent(icon: String, iconColor: Color, title: String, trailing: String?) -> some View {
+        HStack(spacing: 12) {
+            iconView(icon, color: iconColor)
             Text(title)
-                .font(.system(size: 15))
+                .font(.system(size: 17))
                 .foregroundColor(.ink)
             Spacer()
             if let trailing = trailing {
                 Text(trailing)
-                    .font(.system(size: 13))
+                    .font(.system(size: 17))
                     .foregroundColor(.ink3)
+                    .lineLimit(1)
             }
-            Image(systemName: "chevron.right")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.ink3)
         }
-        .padding(.vertical, 16)
-        .contentShape(Rectangle())
     }
 
-    private var rowDivider: some View {
-        Rectangle()
-            .fill(Color.line)
-            .frame(height: 1)
+    private func iconView(_ systemName: String, color: Color) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundColor(.white)
+            .frame(width: 28, height: 28)
+            .background(color)
+            .cornerRadius(7)
     }
 
     private func openManageSubscriptions() {

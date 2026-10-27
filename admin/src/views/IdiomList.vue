@@ -9,7 +9,7 @@
       </el-select>
       <el-button @click="reload">搜索</el-button>
       <div class="spacer" />
-      <span class="free-note">当前免费数量：前 {{ freeCount }} 个（在参数配置中修改）</span>
+      <span class="free-note">免费内容：当日成语（每天自动轮换）</span>
       <el-button type="primary" @click="router.push('/idioms/new')">新增成语</el-button>
       <el-button type="success" :loading="publishing" @click="publishAll">一键发布</el-button>
     </div>
@@ -95,7 +95,7 @@ const pageSize = ref(20);
 const q = ref('');
 const status = ref('');
 const loading = ref(false);
-const freeCount = ref(20);
+
 const publishing = ref(false);
 const publishReport = ref<any>(null);
 
@@ -195,10 +195,6 @@ async function remove(row: any) {
 }
 
 onMounted(async () => {
-  try {
-    const cfg = await api('/admin/config');
-    freeCount.value = cfg.free_count;
-  } catch { /* 忽略 */ }
   load();
 });
 </script>

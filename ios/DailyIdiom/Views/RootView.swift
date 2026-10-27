@@ -82,6 +82,14 @@ struct RootView: View {
         .sheet(isPresented: $state.showPaywall) {
             PaywallView()
         }
+        .sheet(isPresented: Binding(
+            get: { state.presentedWebURL != nil },
+            set: { if !$0 { state.presentedWebURL = nil } }
+        )) {
+            if let url = state.presentedWebURL {
+                SafariView(url: url)
+            }
+        }
     }
 }
 
@@ -181,7 +189,7 @@ private struct NewIdiomsCardView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Color.accentRed)
-                    .clipShape(RoundedRectangle(cornerRadius: 13))
+                    .cornerRadius(999)
             }
             .buttonStyle(.plain)
             .padding(.top, 22)

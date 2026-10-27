@@ -6,7 +6,6 @@ struct PaywallView: View {
     @EnvironmentObject var state: AppState
     @EnvironmentObject var store: StoreManager
     @Environment(\.presentationMode) private var presentationMode
-    @Environment(\.openURL) private var openURL
     @State private var selectedProductID: String?
 
     private var selectedProduct: Product? {
@@ -58,11 +57,13 @@ struct PaywallView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
-        .alert("Notice", isPresented: messageBinding) {
-            Button("OK") { store.message = nil }
-        } message: {
-            Text(store.message ?? "")
-        }
+        .appDialog(
+            isPresented: messageBinding,
+            title: "Notice",
+            message: store.message ?? "",
+            primaryTitle: "OK",
+            primaryAction: { store.message = nil }
+        )
     }
 
     private var messageBinding: Binding<Bool> {
@@ -100,7 +101,7 @@ struct PaywallView: View {
             Divider().overlay(Color.line)
             compareRow(name: "New idioms as they're added", free: "—", pro: "Unlocked automatically", isHeader: false)
         }
-        .background(Color.white)
+        .background(Color.cardBg)
         .cornerRadius(16)
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.line, lineWidth: 1))
     }
@@ -177,7 +178,7 @@ struct PaywallView: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(selected ? Color.accentSoft.opacity(0.35) : Color.white)
+            .background(selected ? Color.accentSoft.opacity(0.35) : Color.cardBg)
             .cornerRadius(16)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
@@ -282,9 +283,9 @@ struct PaywallView: View {
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
             HStack(spacing: 6) {
-                Button("Privacy Policy") { openURL(AppConfig.privacyPolicyURL) }
+                Button("Privacy Policy") { state.openWeb(AppConfig.privacyPolicyURL) }
                 Text("·").foregroundColor(.ink3)
-                Button("Terms of Use") { openURL(AppConfig.termsOfUseURL) }
+                Button("Terms of Use") { state.openWeb(AppConfig.termsOfUseURL) }
             }
             .font(.system(size: 11))
             .foregroundColor(.ink2)

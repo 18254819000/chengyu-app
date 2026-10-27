@@ -25,6 +25,15 @@
 		BB0000000000000000000104 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000104 /* SplashView.swift */; };
 		BB0000000000000000000105 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000105 /* AboutView.swift */; };
 		BB0000000000000000000106 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000106 /* StoryView.swift */; };
+		BB0000000000000000000107 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000107 /* GameCenterManager.swift */; };
+		BB0000000000000000000108 /* PictureGameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000108 /* PictureGameEngine.swift */; };
+		BB0000000000000000000109 /* PictureGuessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000109 /* PictureGuessView.swift */; };
+		BB0000000000000000000110 /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000110 /* LeaderboardView.swift */; };
+		BB0000000000000000000111 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000111 /* AchievementsView.swift */; };
+		BB0000000000000000000112 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000112 /* ReviewView.swift */; };
+		BB0000000000000000000113 /* CheckInCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000113 /* CheckInCalendarView.swift */; };
+		BB0000000000000000000114 /* AppDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000114 /* AppDialog.swift */; };
+		BB0000000000000000000115 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000115 /* SafariView.swift */; };
 		BB0000000000000000000040 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000013 /* AppConfig.swift */; };
 		BB0000000000000000000041 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000014 /* Models.swift */; };
 		BB0000000000000000000042 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000015 /* APIClient.swift */; };
@@ -90,6 +99,15 @@
 		AA0000000000000000000104 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000105 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000106 /* StoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000107 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
+		AA0000000000000000000108 /* PictureGameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureGameEngine.swift; sourceTree = "<group>"; };
+		AA0000000000000000000109 /* PictureGuessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureGuessView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000110 /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000111 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000112 /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000113 /* CheckInCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInCalendarView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000114 /* AppDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDialog.swift; sourceTree = "<group>"; };
+		AA0000000000000000000115 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000013 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		AA0000000000000000000014 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		AA0000000000000000000015 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
@@ -133,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000002 /* LocalStore.swift */,
+				AA0000000000000000000107 /* GameCenterManager.swift */,
 			);
 			name = Services;
 			path = Services;
@@ -144,6 +163,7 @@
 				AA0000000000000000000003 /* AppState.swift */,
 				AA0000000000000000000004 /* StoreManager.swift */,
 				AA0000000000000000000103 /* QuizEngine.swift */,
+				AA0000000000000000000108 /* PictureGameEngine.swift */,
 			);
 			name = State;
 			path = State;
@@ -165,6 +185,13 @@
 				AA0000000000000000000104 /* SplashView.swift */,
 				AA0000000000000000000105 /* AboutView.swift */,
 				AA0000000000000000000106 /* StoryView.swift */,
+				AA0000000000000000000109 /* PictureGuessView.swift */,
+				AA0000000000000000000110 /* LeaderboardView.swift */,
+				AA0000000000000000000111 /* AchievementsView.swift */,
+				AA0000000000000000000112 /* ReviewView.swift */,
+				AA0000000000000000000113 /* CheckInCalendarView.swift */,
+				AA0000000000000000000114 /* AppDialog.swift */,
+				AA0000000000000000000115 /* SafariView.swift */,
 			);
 			name = Views;
 			path = Views;
@@ -265,6 +292,15 @@
 				BB0000000000000000000104 /* SplashView.swift in Sources */,
 				BB0000000000000000000105 /* AboutView.swift in Sources */,
 				BB0000000000000000000106 /* StoryView.swift in Sources */,
+				BB0000000000000000000107 /* GameCenterManager.swift in Sources */,
+				BB0000000000000000000108 /* PictureGameEngine.swift in Sources */,
+				BB0000000000000000000109 /* PictureGuessView.swift in Sources */,
+				BB0000000000000000000110 /* LeaderboardView.swift in Sources */,
+				BB0000000000000000000111 /* AchievementsView.swift in Sources */,
+				BB0000000000000000000112 /* ReviewView.swift in Sources */,
+				BB0000000000000000000113 /* CheckInCalendarView.swift in Sources */,
+				BB0000000000000000000114 /* AppDialog.swift in Sources */,
+				BB0000000000000000000115 /* SafariView.swift in Sources */,
 				BB0000000000000000000040 /* AppConfig.swift in Sources */,
 				BB0000000000000000000041 /* Models.swift in Sources */,
 				BB0000000000000000000042 /* APIClient.swift in Sources */,

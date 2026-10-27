@@ -24,6 +24,15 @@ enum QuizDifficulty: String, CaseIterable, Identifiable {
         }
     }
 
+    /// 难度等级表情（难度选择行标题前展示：幼苗 → 大树 → 火焰，难度递增）
+    var emoji: String {
+        switch self {
+        case .easy: return "🌱"
+        case .medium: return "🌳"
+        case .hard: return "🔥"
+        }
+    }
+
     /// App 内难度标签文案
     var tagText: String { title }
 
@@ -128,12 +137,14 @@ final class QuizEngine: ObservableObject {
         phase = .playing
     }
 
-    /// 选一项：立即锁定并计分，之后不可改选。
+    /// 选一项：立即锁定并计分，之后不可改选；答错进错题本（复习用）。
     func select(option: String) {
         guard phase == .playing, selectedOption == nil, let question = currentQuestion else { return }
         selectedOption = option
         if option == question.answer {
             correctCount += 1
+        } else {
+            LocalStore.recordMistake(id: question.subject.id)
         }
     }
 

@@ -1,4 +1,5 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { dailyIndex } from '../common/daily';
 
 export interface IdiomInput {
   idiom?: string;
@@ -105,10 +106,19 @@ export function lockedView(row: any) {
   return { id: row.id, idiom: row.idiom, pinyin: row.pinyin, locked: true };
 }
 
+/// 当日免费成语 id：已发布按 sort_order 升序，index = 目标日期距 2026-01-01 天数 mod 总数。
+/// 新免费模型（2026-10-27）：免费 = 当日成语；无已发布成语时返回 null（此时全部锁定）。
+export function dailyIdForToday(rows: Array<{ id: number }>, today: string): number | null {
+  if (!rows.length) return null;
+  const idx = dailyIndex(today, rows.length);
+  return idx < 0 ? null : rows[idx].id;
+}
+
 // 小组件/App 每日成语公开视图（不含例句）
 // 注意：2026-10-23 曾改为“锁定时不下发释义”，2026-10-24 用户要求退回上一版（不喜欢小组件显示
-// Subscribers Only），故恢复为始终下发释义。后果：非订阅用户在小组件上仍能看到锁定成语的释义，
-// 这是用户知情后的选择，日后不要在未经用户确认的情况下再次收紧。
+// Subscribers Only），故恢复为始终下发释义。2026-10-27 新免费模型下仍保留此口径：每日接口
+// 下发释义是小组件时间线（未来 7 天）必需的；完整详情（例句、故事）由 /idioms/:id 的 403 门控，
+// 非当日成语的详情对非订阅用户不下发。
 export function dailyView(row: any, date: string, locked: boolean) {
   return {
     date,
@@ -123,11 +133,12 @@ export function dailyView(row: any, date: string, locked: boolean) {
   };
 }
 
-// 后台视图（含免费计算标记由调用方按 free_count 传入）
-export function adminView(row: any, freeCount: number) {
+// 后台视图（含免费标记：是否为当日免费成语，由调用方按当日轮换算出传入；
+// 草稿/下线行不在已发布轮换内，is_free 恒为 false）
+export function adminView(row: any, todayId: number | null) {
   return {
     ...fullView(row, false),
-    is_free: row.sortOrder <= freeCount,
+    is_free: todayId !== null && row.id === todayId,
     source: row.source ?? '',
     tags: row.tags ?? '',
     admin_remark: row.adminRemark ?? '',

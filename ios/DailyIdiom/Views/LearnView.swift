@@ -16,6 +16,7 @@ struct LearnView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
+            streakBar
             content
         }
         .background(Color.paperBg.ignoresSafeArea())
@@ -24,9 +25,15 @@ struct LearnView: View {
                 swipeHint
             }
         }
+        .onAppear {
+            state.refreshStreak()
+        }
         .onChange(of: state.currentIndex) { _ in
             state.savePosition()
-            // 第一次翻页即视为已学会滑动，提示不再出现
+            // 翻到的成语计入已学（去重）；第一次翻页即视为已学会滑动，提示不再出现
+            if let id = state.currentIdiom?.id {
+                LocalStore.recordLearned(id: id)
+            }
             if !hasSeenSwipeHint {
                 hasSeenSwipeHint = true
             }
@@ -90,6 +97,30 @@ struct LearnView: View {
         }
         .padding(.horizontal, 26)
         .padding(.top, 14)
+    }
+
+    /// 打卡 pill（设计稿样式：浅红底、朱红字、胶囊形、左对齐，顶栏下方 16pt 间距）：
+    /// 只显示火焰 + 连续天数；不显示 Checked in 标签——打开 App 即算打卡，该状态恒为已完成，无信息量。
+    /// 点击进入个人中心（内含日历入口）。
+    private var streakBar: some View {
+        Button {
+            state.showSettings = true
+        } label: {
+            HStack(spacing: 6) {
+                Text("🔥")
+                    .font(.system(size: 14))
+                Text(state.streakDays > 0 ? "\(state.streakDays)-day streak" : "Start your streak today")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.accentRed)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .background(Color.accentSoft)
+            .cornerRadius(999)
+        }
+        .padding(.horizontal, 26)
+        .padding(.top, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// 个人中心页（设置内容复用 SettingsView），推入时带系统导航栏与标题

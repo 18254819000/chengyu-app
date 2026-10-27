@@ -68,6 +68,37 @@ struct QuizView: View {
                         .font(.system(size: 12.5))
                         .foregroundColor(.ink3)
                         .padding(.top, 24)
+
+                    Divider()
+                        .padding(.top, 28)
+
+                    Text("More games")
+                        .font(.system(size: 15))
+                        .foregroundColor(.ink2)
+                        .padding(.top, 22)
+
+                    NavigationLink(destination: PictureGuessView()) {
+                        HStack(alignment: .center, spacing: 14) {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Picture Guess")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundColor(.ink)
+                                Text("Look at the story image, pick the idiom · Regular 10 / Endless")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.ink3)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.ink3)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 18)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.cardBg)
+                        .cornerRadius(16)
+                    }
+                    .padding(.top, 16)
                 }
                 .padding(.horizontal, 26)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -84,13 +115,16 @@ struct QuizView: View {
         } label: {
             HStack(alignment: .center, spacing: 14) {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(difficulty.title)
+                    Text("\(difficulty.emoji) \(difficulty.title)")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.ink)
+                        .multilineTextAlignment(.leading)
                     Text(available ? difficulty.subtitle : "\(difficulty.subtitle) (Not enough questions)")
                         .font(.system(size: 13))
                         .foregroundColor(.ink3)
+                        .multilineTextAlignment(.leading)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 if best > 0 {
                     Text("Best: \(best)")
@@ -388,6 +422,11 @@ struct QuizView: View {
             }
             .padding(.horizontal, 26)
             .frame(maxWidth: .infinity)
+        }
+        .onAppear {
+            // 结算点同步榜单与成就（幂等，重复调用无害）
+            state.gameCenter.syncProgress()
+            state.refreshStreak()
         }
     }
 

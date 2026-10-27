@@ -19,9 +19,11 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AppConfigService } from '../config/app-config.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CSV_TEMPLATE_HEADER, parseCsv } from '../common/csv';
+import { todayInBeijing } from '../common/daily';
 import {
   IdiomInput,
   adminView,
+  dailyIdForToday,
   normalizePinyinChars,
   publishValidation,
 } from './idiom.util';
@@ -33,6 +35,16 @@ export class AdminIdiomsController {
     private readonly prisma: PrismaService,
     private readonly config: AppConfigService,
   ) {}
+
+  /// 当日免费成语 id（北京时间口径，供管理端“是否免费”标签使用）
+  private async todayDailyId(): Promise<number | null> {
+    const rows = await this.prisma.idiom.findMany({
+      where: { status: 'published', deleted: false },
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+      select: { id: true },
+    });
+    return dailyIdForToday(rows, todayInBeijing());
+  }
 
   private toData(body: IdiomInput, existing?: any) {
     return {
@@ -85,8 +97,8 @@ export class AdminIdiomsController {
         take: ps,
       }),
     ]);
-    const freeCount = await this.config.getFreeCount();
-    return { total, page: p, pageSize: ps, items: rows.map((r) => adminView(r, freeCount)) };
+    const todayId = await this.todayDailyId();
+    return { total, page: p, pageSize: ps, items: rows.map((r) => adminView(r, todayId)) };
   }
 
   @Get('template')
@@ -103,7 +115,7 @@ export class AdminIdiomsController {
   async detail(@Param('id', ParseIntPipe) id: number) {
     const row = await this.prisma.idiom.findFirst({ where: { id, deleted: false } });
     if (!row) throw new NotFoundException('成语不存在');
-    return adminView(row, await this.config.getFreeCount());
+    return adminView(row, await this.todayDailyId());
   }
 
   // POST /api/v1/admin/idioms 新增（默认草稿）
@@ -118,7 +130,7 @@ export class AdminIdiomsController {
       data.sortOrder = (max._max.sortOrder ?? 0) + 1;
     }
     const row = await this.prisma.idiom.create({ data: { ...data, status: 'draft' } });
-    return adminView(row, await this.config.getFreeCount());
+    return adminView(row, await this.todayDailyId());
   }
 
   // PUT /api/v1/admin/idioms/:id 编辑
@@ -139,7 +151,7 @@ export class AdminIdiomsController {
     }
     const row = await this.prisma.idiom.update({ where: { id }, data });
     if (existing.status === 'published') await this.config.bumpContentVersion();
-    return adminView(row, await this.config.getFreeCount());
+    return adminView(row, await this.todayDailyId());
   }
 
   // DELETE /api/v1/admin/idioms/:id 软删除（标记 deleted 并下架，可由数据库恢复）
@@ -161,7 +173,7 @@ export class AdminIdiomsController {
     if (reasons.length) throw new BadRequestException(`无法发布：${reasons.join('；')}`);
     const updated = await this.prisma.idiom.update({ where: { id }, data: { status: 'published' } });
     await this.config.bumpContentVersion();
-    return adminView(updated, await this.config.getFreeCount());
+    return adminView(updated, await this.todayDailyId());
   }
 
   // POST /api/v1/admin/idioms/publish-all 一键发布全部草稿
@@ -199,7 +211,7 @@ export class AdminIdiomsController {
     if (!row) throw new NotFoundException('成语不存在');
     const updated = await this.prisma.idiom.update({ where: { id }, data: { status: 'offline' } });
     await this.config.bumpContentVersion();
-    return adminView(updated, await this.config.getFreeCount());
+    return adminView(updated, await this.todayDailyId());
   }
 
   // POST /api/v1/admin/idioms/import 批量导入 CSV，逐行校验，成功行以 draft 入库
