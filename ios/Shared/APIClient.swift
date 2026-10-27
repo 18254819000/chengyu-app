@@ -64,6 +64,8 @@ struct APIClient {
         var items = [
             URLQueryItem(name: "page", value: String(page)),
             URLQueryItem(name: "pageSize", value: String(pageSize)),
+            // 新免费模型：锁定以后端算出的当日成语为准，App 传本地当日日期，避免时区不一致
+            URLQueryItem(name: "today", value: DateUtil.todayString()),
         ]
         if let q = query, !q.isEmpty {
             items.append(URLQueryItem(name: "q", value: q))
@@ -85,16 +87,22 @@ struct APIClient {
     }
 
     func fetchIdiom(id: Int) async throws -> Idiom {
-        try await get("/idioms/\(id)")
+        try await get("/idioms/\(id)", query: [URLQueryItem(name: "today", value: DateUtil.todayString())])
     }
 
     func fetchDaily(date: String) async throws -> DailyIdiom {
-        try await get("/daily", query: [URLQueryItem(name: "date", value: date)])
+        try await get("/daily", query: [
+            URLQueryItem(name: "date", value: date),
+            URLQueryItem(name: "today", value: DateUtil.todayString()),
+        ])
     }
 
     func fetchDailyWeek(from: String) async throws -> [DailyIdiom] {
         let resp: DailyWeekResponse = try await get("/daily/week",
-                                                     query: [URLQueryItem(name: "from", value: from)])
+                                                     query: [
+                                                        URLQueryItem(name: "from", value: from),
+                                                        URLQueryItem(name: "today", value: DateUtil.todayString()),
+                                                     ])
         return resp.days
     }
 

@@ -23,7 +23,9 @@ struct SettingsView: View {
                     SKPaymentQueue.default().presentCodeRedemptionSheet()
                 }
             }
-            Section(header: Text("LEARNING")) {
+            // 学习功能只对订阅用户：免费用户没有打卡、日历、复习、排行榜、成就，整个 section 隐藏
+            if state.isEntitled {
+                Section(header: Text("LEARNING")) {
                 NavigationLink {
                     CheckInCalendarView()
                 } label: {
@@ -43,6 +45,7 @@ struct SettingsView: View {
                     AchievementsView()
                 } label: {
                     rowContent(icon: "crown.fill", iconColor: .indigo, title: "Achievements", trailing: nil)
+                }
                 }
             }
             Section(header: Text("HOME SCREEN")) {

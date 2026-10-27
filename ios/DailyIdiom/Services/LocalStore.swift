@@ -40,6 +40,12 @@ enum LocalStore {
         set { defaults.set(newValue, forKey: "hasCompletedFirstSync") }
     }
 
+    /// 首次安装小组件提示是否已展示过（只弹一次；App 无法检测用户是否已添加小组件）
+    static var hasSeenWidgetPrompt: Bool {
+        get { defaults.bool(forKey: "hasSeenWidgetPrompt") }
+        set { defaults.set(newValue, forKey: "hasSeenWidgetPrompt") }
+    }
+
     // MARK: 学习位置（落点规则用）
 
     static var lastVisitDate: String? {

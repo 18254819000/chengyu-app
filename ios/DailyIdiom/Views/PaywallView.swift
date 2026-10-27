@@ -18,6 +18,8 @@ struct PaywallView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     hero
+                    freeTierNote
+                        .padding(.top, 18)
                     comparisonTable
                         .padding(.top, 24)
                     plans
@@ -89,15 +91,28 @@ struct PaywallView: View {
         }
     }
 
-    // MARK: 权益对比（免费数量取后台配置）
+    // MARK: 免费档说明（订阅说明白：不订阅也能每天体验一个成语）
+
+    private var freeTierNote: some View {
+        Text("No subscription? No problem — you can still enjoy one free idiom every day on the Home page. It changes daily.")
+            .font(.system(size: 13.5))
+            .foregroundColor(.ink2)
+            .lineSpacing(5)
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.cardBg)
+            .cornerRadius(12)
+    }
+
+    // MARK: 权益对比（新免费模型：免费 = 每天一个当日成语）
 
     private var comparisonTable: some View {
         VStack(spacing: 0) {
             compareRow(name: "", free: "Free", pro: "Premium", isHeader: true)
             Divider().overlay(Color.line)
-            compareRow(name: "Idioms to learn", free: "\(state.freeCount)", pro: "All", isHeader: false)
+            compareRow(name: "Idioms to learn", free: "1 per day", pro: "All", isHeader: false)
             Divider().overlay(Color.line)
-            compareRow(name: "Full example sentences", free: "First \(state.freeCount)", pro: "All", isHeader: false)
+            compareRow(name: "Full example sentences", free: "Today's idiom", pro: "All", isHeader: false)
             Divider().overlay(Color.line)
             compareRow(name: "New idioms as they're added", free: "—", pro: "Unlocked automatically", isHeader: false)
         }

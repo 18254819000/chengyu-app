@@ -19,6 +19,14 @@ final class AppState: ObservableObject {
     @Published var showSettings = false
     /// 首页右上角「测试」入口 NavigationLink 的激活状态（true = 测试页已推入）
     @Published var showQuiz = false
+    /// 测试图标点按时若未订阅，先弹订阅页、订阅成功后再进测试页（pendingQuizEntry 标记此次意图）
+    var pendingQuizEntry = false
+    /// 当日免费成语 id（同步时由后端 daily 接口确定；离线时由本地轮换公式兜底）
+    @Published var dailyIdiomId: Int?
+    /// 小组件引导页（WidgetGuideView）的推入状态（首次安装小组件提示的主按钮驱动）
+    @Published var showWidgetGuide = false
+    /// 首次安装小组件提示弹窗是否呈现（只弹一次，见 LocalStore.hasSeenWidgetPrompt）
+    @Published var showWidgetPrompt = false
     @Published var newIdiomIds: Set<Int> = []
     @Published var pendingNewCount: Int = 0
     @Published var showNewIdiomsAlert = false
@@ -49,7 +57,34 @@ final class AppState: ObservableObject {
     // MARK: 派生状态
 
     var isEntitled: Bool { entitlement?.entitled ?? false }
-    var freeCount: Int { config?.freeCount ?? 20 }
+
+    /// 当日免费成语（同步未完成时为 nil，调用方回退到 currentIdiom）
+    var todayIdiom: Idiom? {
+        guard let id = dailyIdiomId else { return nil }
+        return idioms.first { $0.id == id }
+    }
+
+    var todayIdiomIndex: Int? {
+        guard let id = dailyIdiomId else { return nil }
+        return idioms.firstIndex { $0.id == id }
+    }
+
+    /// 测试图标点按：已订阅直接进测试页；未订阅先弹订阅页，订阅成功后由权益翻转接力进测试页
+    func quizIconTapped() {
+        if isEntitled {
+            showQuiz = true
+        } else {
+            pendingQuizEntry = true
+            showPaywall = true
+        }
+    }
+
+    /// 回到当日免费成语（订阅过期回落、免费用户首页定位用）
+    func moveToToday() {
+        guard let idx = todayIdiomIndex else { return }
+        currentIndex = idx
+        savePosition()
+    }
 
     var effectiveProductIDs: (monthly: String, yearly: String) {
         let monthly = (config?.monthlyProductId.isEmpty == false)
@@ -75,18 +110,25 @@ final class AppState: ObservableObject {
         guard !didBootstrap else { return }
         didBootstrap = true
 
-        // 打卡：打开 App 当天即算（最宽松口径）；Game Center 认证（静默，失败不阻塞）
-        if LocalStore.recordCheckIn() {
-            gameCenter.syncProgress()
-        }
-        refreshStreak()
-        gameCenter.authenticate()
-
-        // 1. 先读缓存立即渲染
+        // 1. 先读缓存立即渲染（含缓存的权益；后续打卡与 Game Center 认证只对订阅用户做）
         let cached = LocalStore.loadCachedIdioms()
         idioms = cached
         newIdiomIds = Set(LocalStore.newIdiomIds)
         entitlement = LocalStore.loadCachedEntitlement()
+
+        // 打卡与 Game Center 只对订阅用户：免费用户没有打卡，也不对免费用户弹 Game Center 登录
+        // （打卡口径仍是“打开 App 当天即算”，只是适用范围收窄到订阅用户）
+        if isEntitled {
+            if LocalStore.recordCheckIn() {
+                gameCenter.syncProgress()
+            }
+            gameCenter.authenticate()
+        }
+        refreshStreak()
+        // 免费用户的当日免费成语先按本地轮换公式从缓存占位，同步拿到后端 daily 后再纠正
+        if !isEntitled {
+            applyOfflineFreeFlags()
+        }
 
         // 2. 落点占位：同一天再打开恢复上次位置（若上次落在锁定页，钳到最近的免费条）；
         //    跨天（每日首次）等同步拿到 daily 后定位
@@ -119,8 +161,8 @@ final class AppState: ObservableObject {
     /// 从后台切回前台时重新确认权益与内容（需求：订阅状态在切回时重新确认）
     func refreshOnForeground() async {
         guard didBootstrap else { return }
-        // 跨天回前台也算当日打开：补记打卡并同步榜单
-        if LocalStore.recordCheckIn() {
+        // 跨天回前台：仅订阅用户补记打卡并同步榜单；免费用户没有打卡
+        if isEntitled, LocalStore.recordCheckIn() {
             gameCenter.syncProgress()
         }
         refreshStreak()
@@ -169,6 +211,10 @@ final class AppState: ObservableObject {
             if let week = try? await api.fetchDailyWeek(from: today) {
                 SharedStore.saveWeek(week)
             }
+            // 当日免费成语以后端 daily 为准（App 不再本地定免费，避免时区不一致）
+            if let dailyId = daily?.id {
+                dailyIdiomId = dailyId
+            }
             positionForToday(dailyId: daily?.id)
             WidgetCenter.shared.reloadAllTimelines()
 
@@ -181,7 +227,11 @@ final class AppState: ObservableObject {
             syncError = idioms.isEmpty
                 ? "Couldn't load content. Check your connection and try again."
                 : "You're offline. Showing cached content."
-            // 断网兜底：用本地缓存与轮换公式定位当日成语，小组件继续用共享缓存
+            // 断网兜底：用本地缓存与轮换公式定位当日成语，小组件继续用共享缓存；
+            // 免费用户顺带按本地公式刷新锁定标记（昨日缓存的标记已过期），不写缓存，下次同步以后端为准
+            if !isEntitled {
+                applyOfflineFreeFlags()
+            }
             positionForToday(dailyId: nil)
         }
     }
@@ -197,6 +247,22 @@ final class AppState: ObservableObject {
             SharedStore.saveWeek(week)
         }
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    /// 离线兜底：按本地轮换公式算出当日免费成语，刷新内存中的锁定标记（仅非订阅用户）。
+    /// 本地公式与后端同一口径（UTC 天数差），日期取设备本地当日；下次同步成功后服务端标记会覆盖这里。
+    private func applyOfflineFreeFlags() {
+        guard !idioms.isEmpty else { return }
+        let idx = DateUtil.dailyIndex(dateString: DateUtil.todayString(), count: idioms.count)
+        let todayId = idioms[idx].id
+        dailyIdiomId = todayId
+        idioms = idioms.map { item in
+            Idiom(id: item.id, idiom: item.idiom, pinyin: item.pinyin, pinyinChars: item.pinyinChars,
+                  definitionZh: item.definitionZh, definitionEn: item.definitionEn,
+                  exampleZh: item.exampleZh, exampleEn: item.exampleEn,
+                  sortOrder: item.sortOrder, status: item.status, locked: item.id != todayId,
+                  storyZh: item.storyZh, storyEn: item.storyEn, tags: item.tags, imageUrl: item.imageUrl)
+        }
     }
 
     private func clampCurrentIndex() {
@@ -289,9 +355,21 @@ final class AppState: ObservableObject {
         if let txId = status.originalTransactionId {
             SharedStore.originalTransactionId = txId
         }
-        if status.entitled != wasEntitled {
+        guard status.entitled != wasEntitled else { return }
+        if status.entitled {
+            // 订阅成功：Game Center 开始认证；内容刷新后若是测试图标触发的订阅，接力进测试页
+            gameCenter.authenticate()
             Task { [weak self] in
                 await self?.reloadContentAfterEntitlementChange()
+                guard let self = self, self.pendingQuizEntry else { return }
+                self.pendingQuizEntry = false
+                self.showQuiz = true
+            }
+        } else {
+            // 订阅过期回落：内容刷新后回到当日免费成语，不停在突然被锁的页面上
+            Task { [weak self] in
+                await self?.reloadContentAfterEntitlementChange()
+                self?.moveToToday()
             }
         }
     }

@@ -16,12 +16,15 @@ struct LearnView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            streakBar
+            if state.isEntitled {
+                streakBar
+            }
             content
         }
         .background(Color.paperBg.ignoresSafeArea())
         .overlay(alignment: .bottom) {
-            if !hasSeenSwipeHint && state.idioms.count > 1 {
+            // 滑动提示只对订阅用户：免费用户不可滑动，教滑动等于引导用户去撞付费墙
+            if state.isEntitled && !hasSeenSwipeHint && state.idioms.count > 1 {
                 swipeHint
             }
         }
@@ -30,9 +33,10 @@ struct LearnView: View {
         }
         .onChange(of: state.currentIndex) { _ in
             state.savePosition()
-            // 翻到的成语计入已学（去重）；第一次翻页即视为已学会滑动，提示不再出现
-            if let id = state.currentIdiom?.id {
-                LocalStore.recordLearned(id: id)
+            // 翻到的成语计入已学（去重）；锁定页不计（免费用户点列表进锁定页不算学过）
+            // 第一次翻页即视为已学会滑动，提示不再出现
+            if let idiom = state.currentIdiom, !idiom.locked {
+                LocalStore.recordLearned(id: idiom.id)
             }
             if !hasSeenSwipeHint {
                 hasSeenSwipeHint = true
@@ -78,8 +82,15 @@ struct LearnView: View {
                 .foregroundColor(.ink)
             Spacer()
             HStack(spacing: 8) {
-                NavigationLink(destination: QuizView(), isActive: $state.showQuiz) {
+                // 测试图标：已订阅直接进测试页，未订阅先弹订阅页（订阅成功后接力进测试页）；
+                // 实际导航由下面这个空标签链接承载（isActive 驱动）
+                Button {
+                    state.quizIconTapped()
+                } label: {
                     TopBarIconLabel(systemName: "doc.text.magnifyingglass")
+                }
+                NavigationLink(destination: QuizView(), isActive: $state.showQuiz) {
+                    EmptyView()
                 }
                 NavigationLink(destination: AllIdiomsView(), isActive: $state.showAllList) {
                     TopBarIconLabel(systemName: "list.bullet")
@@ -92,6 +103,10 @@ struct LearnView: View {
                 .disabled(!canShareCurrent)
                 NavigationLink(destination: settingsDestination, isActive: $state.showSettings) {
                     TopBarIconLabel(systemName: "person.crop.circle")
+                }
+                // 小组件引导页：首次安装小组件提示的主按钮驱动（空标签链接，isActive 驱动）
+                NavigationLink(destination: WidgetGuideView(), isActive: $state.showWidgetGuide) {
+                    EmptyView()
                 }
             }
         }
@@ -130,15 +145,22 @@ struct LearnView: View {
             .navigationBarTitleDisplayMode(.inline)
     }
 
+    /// 分享对象：订阅用户分享当前页；免费用户分享当日成语（首页只显示当日成语，
+    /// currentIndex 可能被列表点击带偏到锁定页，不能拿它当分享对象）
+    private var sharedIdiom: Idiom? {
+        if state.isEntitled { return state.currentIdiom }
+        return state.todayIdiom ?? state.currentIdiom
+    }
+
     /// 当前成语可分享的条件：未锁定且释义齐全（锁定条目后端不下发释义，生成不了完整卡片）
     private var canShareCurrent: Bool {
-        guard let idiom = state.currentIdiom, !idiom.locked else { return false }
+        guard let idiom = sharedIdiom, !idiom.locked else { return false }
         return !(idiom.definitionZh ?? "").isEmpty && !(idiom.definitionEn ?? "").isEmpty
     }
 
     /// 点击时才渲染分享卡（1080×1350），生成成功才以 item 驱动面板（见 ShareItem 注释）
     private func shareCurrentIdiom() {
-        guard let idiom = state.currentIdiom, canShareCurrent else { return }
+        guard let idiom = sharedIdiom, canShareCurrent else { return }
         if let image = ShareCardRenderer.render(IdiomShareCard(idiom: idiom)) {
             shareItem = ShareItem(image: image)
         }
@@ -148,11 +170,83 @@ struct LearnView: View {
     private var content: some View {
         if state.idioms.isEmpty {
             emptyState
-        } else {
+        } else if state.isEntitled {
             PagerView(pageCount: state.idioms.count, currentIndex: $state.currentIndex) { index in
                 IdiomPageView(idiom: state.idioms[index])
             }
+        } else {
+            freePage
         }
+    }
+
+    /// 免费用户首页：只有当日成语一页，不可翻页；横向滑动手势弹订阅页（纵向滚动不受影响，
+    /// simultaneousGesture + 方向判定：只响应横向主导、位移 > 50pt 的滑动）
+    @ViewBuilder
+    private var freePage: some View {
+        if let idiom = state.todayIdiom ?? state.currentIdiom {
+            if (idiom.definitionZh ?? "").isEmpty {
+                if state.syncError != nil {
+                    // 离线且跨天：昨日缓存里当日成语是锁定条目、无释义，联网同步后才能加载
+                    offlineTodayState
+                } else {
+                    // 同步进行中或尚未开始：先给加载态，不给“无网络”的错误提示
+                    VStack(spacing: 12) {
+                        Spacer()
+                        ProgressView()
+                        Text("Loading today's idiom…")
+                            .font(.system(size: 14))
+                            .foregroundColor(.ink3)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 40)
+                }
+            } else {
+                IdiomPageView(idiom: idiom)
+                    .onAppear {
+                        LocalStore.recordLearned(id: idiom.id)
+                    }
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 20)
+                            .onEnded { value in
+                                let dx = value.translation.width
+                                let dy = value.translation.height
+                                if abs(dx) > 50 && abs(dx) > abs(dy) {
+                                    state.showPaywall = true
+                                }
+                            }
+                    )
+            }
+        }
+    }
+
+    /// 离线跨天占位：当日成语在缓存里无内容，联网同步后才能加载
+    private var offlineTodayState: some View {
+        VStack(spacing: 14) {
+            Spacer()
+            Image(systemName: "wifi.slash")
+                .font(.system(size: 32, weight: .light))
+                .foregroundColor(.ink3)
+            Text("Today's idiom isn't available offline yet")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(.ink)
+            Text("Connect to the internet and reopen the app to load today's free idiom.")
+                .font(.system(size: 13.5))
+                .foregroundColor(.ink3)
+                .multilineTextAlignment(.center)
+                .lineSpacing(5)
+            Button("Retry") {
+                Task { await state.sync() }
+            }
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundColor(.accentRed)
+            .padding(.horizontal, 26)
+            .padding(.vertical, 9)
+            .overlay(
+                Capsule().stroke(Color.line, lineWidth: 1)
+            )
+            Spacer()
+        }
+        .padding(.horizontal, 40)
     }
 
     @ViewBuilder

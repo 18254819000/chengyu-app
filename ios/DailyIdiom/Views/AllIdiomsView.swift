@@ -67,6 +67,16 @@ struct AllIdiomsView: View {
                             .background(Color.accentRed)
                             .cornerRadius(5)
                     }
+                    // 当日免费成语标记（免费用户在几百条里一眼找到今天那条）
+                    if item.id == state.dailyIdiomId {
+                        Text("TODAY")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.accentRed)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(Color.accentSoft)
+                            .cornerRadius(5)
+                    }
                 }
                 Text(item.pinyin)
                     .font(.system(size: 12.5, design: .serif))

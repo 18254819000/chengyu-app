@@ -79,9 +79,37 @@ struct RootView: View {
                 Task { await state.refreshOnForeground() }
             }
         }
-        .sheet(isPresented: $state.showPaywall) {
+        .onChange(of: showSplash) { splash in
+            // 首次安装小组件提示：欢迎页淡出后弹一次（主按钮进图文引导，次按钮关闭；两者都标记已展示）
+            if !splash && !LocalStore.hasSeenWidgetPrompt {
+                state.showWidgetPrompt = true
+            }
+        }
+        .sheet(isPresented: $state.showPaywall, onDismiss: {
+            // 非订阅关闭（手动关闭付费墙）时清除测试页意图，避免之后经其他入口订阅时误进测试页；
+            // 订阅成功导致的关闭此时 isEntitled 已为 true，不清除（权益翻转接力进测试页）
+            if !state.isEntitled {
+                state.pendingQuizEntry = false
+            }
+        }) {
             PaywallView()
         }
+        .appDialog(
+            isPresented: $state.showWidgetPrompt,
+            title: "Add the Daily Widget",
+            message: "See today's idiom right on your Home Screen — no need to open the app.",
+            primaryTitle: "See How",
+            primaryAction: {
+                state.showWidgetPrompt = false
+                LocalStore.hasSeenWidgetPrompt = true
+                state.showWidgetGuide = true
+            },
+            secondaryTitle: "Not Now",
+            secondaryAction: {
+                state.showWidgetPrompt = false
+                LocalStore.hasSeenWidgetPrompt = true
+            }
+        )
         .sheet(isPresented: Binding(
             get: { state.presentedWebURL != nil },
             set: { if !$0 { state.presentedWebURL = nil } }
