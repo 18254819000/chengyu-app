@@ -185,11 +185,8 @@ struct LearnView: View {
     private var freePage: some View {
         if let idiom = state.todayIdiom ?? state.currentIdiom {
             if (idiom.definitionZh ?? "").isEmpty {
-                if state.syncError != nil {
-                    // 离线且跨天：昨日缓存里当日成语是锁定条目、无释义，联网同步后才能加载
-                    offlineTodayState
-                } else {
-                    // 同步进行中或尚未开始：先给加载态，不给“无网络”的错误提示
+                if state.isSyncing {
+                    // 同步进行中：先给加载态
                     VStack(spacing: 12) {
                         Spacer()
                         ProgressView()
@@ -199,6 +196,10 @@ struct LearnView: View {
                         Spacer()
                     }
                     .padding(.horizontal, 40)
+                } else {
+                    // 同步已结束仍无内容（离线跨天、昨日缓存无释义）：给带重试的占位，
+                    // 绝不能无限 loading——此前版本在这里同步成功但 syncError 为 nil 时会卡死
+                    offlineTodayState
                 }
             } else {
                 IdiomPageView(idiom: idiom)

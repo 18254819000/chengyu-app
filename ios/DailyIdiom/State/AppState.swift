@@ -179,31 +179,32 @@ final class AppState: ObservableObject {
         do {
             let cfg = try await api.fetchConfig()
             let isFirstSync = !LocalStore.hasCompletedFirstSync
-            let versionChanged = cfg.contentVersion != LocalStore.lastSeenContentVersion
             config = cfg
             // 商品 ID 以后台配置为准，拿到 config 后按最新 ID 刷新商品（启动时先用默认 ID 拉过一次）
             await store.loadProducts()
 
-            if versionChanged || idioms.isEmpty {
-                let oldIds = Set(idioms.map { $0.id })
-                let all = try await api.fetchAllIdioms()
-                idioms = all
-                LocalStore.saveIdioms(all)
-                clampCurrentIndex()
+            // 全量列表每次同步都拉，不再只靠 content_version 判断：新免费模型下免费集合每天轮换
+            // （当日成语），昨日缓存里当日成语仍是无释义的锁定条目；若跳过拉取，首页会一直卡在
+            // “Loading today's idiom…”（同步成功、syncError 为 nil，永远切不到离线占位）。
+            // 新增提醒仍按新旧 id 差集判断，无新增时差集为空，不会误弹。
+            let oldIds = Set(idioms.map { $0.id })
+            let all = try await api.fetchAllIdioms()
+            idioms = all
+            LocalStore.saveIdioms(all)
+            clampCurrentIndex()
 
-                // 新增提醒：非首次安装、且确实有新增已发布成语时才弹，同批只弹一次（靠版本号推进保证）
-                if !isFirstSync {
-                    let added = Set(all.map { $0.id }).subtracting(oldIds)
-                    if !added.isEmpty {
-                        newIdiomIds.formUnion(added)
-                        LocalStore.newIdiomIds = Array(newIdiomIds)
-                        pendingNewCount = added.count
-                        showNewIdiomsAlert = true
-                    }
+            // 新增提醒：非首次安装、且确实有新增已发布成语时才弹，同批只弹一次
+            if !isFirstSync {
+                let added = Set(all.map { $0.id }).subtracting(oldIds)
+                if !added.isEmpty {
+                    newIdiomIds.formUnion(added)
+                    LocalStore.newIdiomIds = Array(newIdiomIds)
+                    pendingNewCount = added.count
+                    showNewIdiomsAlert = true
                 }
-                if isFirstSync { LocalStore.hasCompletedFirstSync = true }
-                LocalStore.lastSeenContentVersion = cfg.contentVersion
             }
+            if isFirstSync { LocalStore.hasCompletedFirstSync = true }
+            LocalStore.lastSeenContentVersion = cfg.contentVersion
 
             // 每日成语定位 + 未来 7 天写入共享存储供小组件使用
             let today = DateUtil.todayString()
