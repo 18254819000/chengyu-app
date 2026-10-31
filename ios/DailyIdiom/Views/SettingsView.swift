@@ -41,10 +41,12 @@ struct SettingsView: View {
                 } label: {
                     rowContent(icon: "trophy.fill", iconColor: .yellow, title: L("Leaderboard"), trailing: nil)
                 }
-                NavigationLink {
-                    AchievementsView()
-                } label: {
-                    rowContent(icon: "crown.fill", iconColor: .indigo, title: L("Achievements"), trailing: nil)
+                if GameCenterManager.achievementsEnabled {
+                    NavigationLink {
+                        AchievementsView()
+                    } label: {
+                        rowContent(icon: "crown.fill", iconColor: .indigo, title: L("Achievements"), trailing: nil)
+                    }
                 }
                 }
             }

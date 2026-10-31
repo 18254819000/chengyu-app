@@ -10,6 +10,10 @@ final class GameCenterManager: NSObject, ObservableObject, GKGameCenterControlle
 
     // MARK: 榜单与成就 ID（与需求文档第 20 章一致）
 
+    /// v1 不做成就（缺图标，ASC 成就必须配图）：入口与上报均关闭，只保留排行榜。
+    /// 以后有图后改 true，并在 ASC 建 12 个成就即可恢复（本地进度一直在记，不会丢）。
+    static let achievementsEnabled = false
+
     static let streakBoardID = "com.mengma.dailyidiom.lb.streak"
     static let checkinsBoardID = "com.mengma.dailyidiom.lb.checkins"
     static let quizBoardID = "com.mengma.dailyidiom.lb.quiz"
@@ -94,6 +98,7 @@ final class GameCenterManager: NSObject, ObservableObject, GKGameCenterControlle
     }
 
     func reportAchievement(_ fullID: String, percent: Double) {
+        guard Self.achievementsEnabled else { return }
         let p = min(100, max(0, percent))
         guard p > 0 else { return }
         guard isAuthenticated else {
