@@ -27,7 +27,7 @@ struct ReviewView: View {
             .padding(.bottom, 30)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("Review")
+        .navigationTitle(L("Review"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { refresh() }
     }
@@ -38,15 +38,15 @@ struct ReviewView: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text("Due today")
+                    Text(L("Due today"))
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.ink)
                     Spacer()
-                    Text("\(dueIds.count) idioms")
+                    Text(String(format: L("%d idioms"), dueIds.count))
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.accentRed)
                 }
-                Text("Mistakes first, then due reviews · 1 / 3 / 7-day rotation")
+                Text(L("Mistakes first, then due reviews · 1 / 3 / 7-day rotation"))
                     .font(.system(size: 13))
                     .foregroundColor(.ink2)
                 Button {
@@ -56,7 +56,7 @@ struct ReviewView: View {
                     revealed = false
                     inSession = true
                 } label: {
-                    Text(dueIds.isEmpty ? "Nothing Due Today 🎉" : "Start Review")
+                    Text(dueIds.isEmpty ? L("Nothing Due Today 🎉") : L("Start Review"))
                         .font(.system(size: 15, weight: .semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 13)
@@ -71,13 +71,13 @@ struct ReviewView: View {
             .background(Color.cardBg)
             .cornerRadius(16)
 
-            Text("Mistake book (\(mistakes.count))")
+            Text(String(format: L("Mistake book (%d)"), mistakes.count))
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.ink)
                 .padding(.top, 26)
                 .padding(.bottom, 6)
             if mistakes.isEmpty {
-                Text("No mistakes yet — keep playing and anything you miss will land here.")
+                Text(L("No mistakes yet — keep playing and anything you miss will land here."))
                     .font(.system(size: 13))
                     .foregroundColor(.ink3)
                     .lineSpacing(4)
@@ -88,7 +88,7 @@ struct ReviewView: View {
                             Text(item.idiom.idiom)
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(.ink)
-                            Text("Missed \(item.info.wrongCount)× · last missed \(item.info.lastWrong)")
+                            Text(String(format: L("Missed %d× · last missed %@"), item.info.wrongCount, item.info.lastWrong))
                                 .font(.system(size: 12.5))
                                 .foregroundColor(.ink3)
                         }
@@ -104,7 +104,7 @@ struct ReviewView: View {
                 }
             }
 
-            Text("How review works: see the idiom → recall it → tap to reveal the meaning → “Got it” moves it to a later round, “Still learning” brings it back tomorrow.")
+            Text(L("How review works: see the idiom → recall it → tap to reveal the meaning → “Got it” moves it to a later round, “Still learning” brings it back tomorrow."))
                 .font(.system(size: 12.5))
                 .foregroundColor(.ink3)
                 .lineSpacing(4)
@@ -130,11 +130,11 @@ struct ReviewView: View {
            let idiom = state.idioms.first(where: { $0.id == dueIds[sessionIndex] }) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
-                    Text("Review \(sessionIndex + 1)/\(dueIds.count)")
+                    Text(String(format: L("Review %d/%d"), sessionIndex + 1, dueIds.count))
                         .font(.system(size: 12.5, weight: .medium))
                         .foregroundColor(.ink3)
                     Spacer()
-                    Button("End") {
+                    Button(L("End")) {
                         inSession = false
                         refresh()
                     }
@@ -169,7 +169,7 @@ struct ReviewView: View {
                         Button {
                             judge(gotIt: false, idiom: idiom)
                         } label: {
-                            Text("Still Learning")
+                            Text(L("Still Learning"))
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(.accentRed)
                                 .frame(maxWidth: .infinity)
@@ -179,7 +179,7 @@ struct ReviewView: View {
                         Button {
                             judge(gotIt: true, idiom: idiom)
                         } label: {
-                            Text("Got It")
+                            Text(L("Got It"))
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -193,7 +193,7 @@ struct ReviewView: View {
                     Button {
                         revealed = true
                     } label: {
-                        Text("Reveal Meaning")
+                        Text(L("Reveal Meaning"))
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -206,18 +206,18 @@ struct ReviewView: View {
             }
         } else {
             VStack(spacing: 12) {
-                Text("Review Complete 🎉")
+                Text(L("Review Complete 🎉"))
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.ink)
                     .padding(.top, 40)
-                Text("\(sessionGotIt) of \(dueIds.count) mastered this round")
+                Text(String(format: L("%d of %d mastered this round"), sessionGotIt, dueIds.count))
                     .font(.system(size: 14))
                     .foregroundColor(.ink2)
                 Button {
                     inSession = false
                     refresh()
                 } label: {
-                    Text("Back to Review")
+                    Text(L("Back to Review"))
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -254,7 +254,7 @@ private struct IdiomDetailPushView: View {
 
     var body: some View {
         IdiomPageView(idiom: idiom)
-            .navigationTitle("Idiom")
+            .navigationTitle(L("Idiom"))
             .navigationBarTitleDisplayMode(.inline)
     }
 }

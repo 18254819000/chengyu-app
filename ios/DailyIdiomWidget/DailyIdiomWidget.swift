@@ -162,7 +162,7 @@ struct DailyIdiomWidget: Widget {
             DailyIdiomWidgetView(entry: entry)
         }
         .configurationDisplayName("Daily Chengyu")
-        .description("A new Chinese idiom every day")
+        .description(L("A new Chinese idiom every day"))
         .supportedFamilies([.systemMedium, .systemLarge, .systemExtraLarge])
     }
 }

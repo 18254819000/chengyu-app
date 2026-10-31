@@ -9,15 +9,15 @@ enum PictureGameMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .regular: return "Regular"
-        case .endless: return "Endless"
+        case .regular: return L("Regular")
+        case .endless: return L("Endless")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .regular: return "10 questions, picture prompts"
-        case .endless: return "Answer until one miss — your streak is your score"
+        case .regular: return L("10 questions, picture prompts")
+        case .endless: return L("Answer until one miss — your streak is your score")
         }
     }
 }

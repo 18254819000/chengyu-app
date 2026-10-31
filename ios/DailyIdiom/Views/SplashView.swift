@@ -23,7 +23,7 @@ struct SplashView: View {
                     .foregroundColor(.ink)
                     .padding(.top, 22)
 
-                Text("One idiom a day, wisdom for a lifetime.")
+                Text(L("One idiom a day, wisdom for a lifetime."))
                     .font(.system(size: 15))
                     .foregroundColor(.ink2)
                     .multilineTextAlignment(.center)

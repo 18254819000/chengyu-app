@@ -18,16 +18,16 @@ struct AboutView: View {
                     .foregroundColor(.ink)
                     .padding(.top, 16)
 
-                Text("Version \(AppConfig.appVersion)")
+                Text(String(format: L("Version %@"), AppConfig.appVersion))
                     .font(.system(size: 12.5))
                     .foregroundColor(.ink3)
                     .padding(.top, 5)
 
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Daily Chengyu brings you one Chinese idiom (chengyu) every day. Each idiom comes with character-by-character pinyin, meanings in English and Chinese, and a bilingual example sentence.")
-                    Text("Test yourself with three levels of quizzes, from everyday meanings to fill-in-the-blank challenges, and share beautiful idiom cards with friends.")
-                    Text("Our logo tells the story of The Old Man Who Moved the Mountains (愚公移山): a tiny figure, a huge mountain, and progress made one basket at a time. That is exactly how we hope you learn — one idiom a day, every day.")
-                    Text("New idioms are added regularly. The first 20 are free; a subscription unlocks the full collection.")
+                    Text(L("Daily Chengyu brings you one Chinese idiom (chengyu) every day. Each idiom comes with character-by-character pinyin, meanings in English and Chinese, and a bilingual example sentence."))
+                    Text(L("Test yourself with three levels of quizzes, from everyday meanings to fill-in-the-blank challenges, and share beautiful idiom cards with friends."))
+                    Text(L("Our logo tells the story of The Old Man Who Moved the Mountains (愚公移山): a tiny figure, a huge mountain, and progress made one basket at a time. That is exactly how we hope you learn — one idiom a day, every day."))
+                    Text(L("New idioms are added regularly. Free users enjoy one idiom a day; a subscription unlocks the full collection."))
                 }
                 .font(.system(size: 14.5))
                 .foregroundColor(.ink2)
@@ -35,7 +35,7 @@ struct AboutView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 26)
 
-                Text("Questions or feedback: \(AppConfig.supportEmail)")
+                Text(String(format: L("Questions or feedback: %@"), AppConfig.supportEmail))
                     .font(.system(size: 12.5))
                     .foregroundColor(.ink3)
                     .multilineTextAlignment(.center)
@@ -45,7 +45,7 @@ struct AboutView: View {
             .padding(.bottom, 32)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("About")
+        .navigationTitle(L("About"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -22,9 +22,9 @@ struct AllIdiomsView: View {
             }
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("All Idioms")
+        .navigationTitle(L("All Idioms"))
         .navigationBarTitleDisplayMode(.large)
-        .searchable(text: $query, prompt: "Search idioms or pinyin…")
+        .searchable(text: $query, prompt: L("Search idioms or pinyin…"))
         .onChange(of: query) { newValue in
             scheduleSearch(newValue)
         }
@@ -59,7 +59,7 @@ struct AllIdiomsView: View {
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(item.locked ? .ink2 : .ink)
                     if state.newIdiomIds.contains(item.id) {
-                        Text("NEW")
+                        Text(L("NEW"))
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 5)
@@ -69,7 +69,7 @@ struct AllIdiomsView: View {
                     }
                     // 当日免费成语标记（免费用户在几百条里一眼找到今天那条）
                     if item.id == state.dailyIdiomId {
-                        Text("TODAY")
+                        Text(L("TODAY"))
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.accentRed)
                             .padding(.horizontal, 5)
@@ -100,17 +100,17 @@ struct AllIdiomsView: View {
     /// 搜索无结果必须有明确提示与清空入口（需求 F3）
     private var emptySearchState: some View {
         VStack(spacing: 0) {
-            Text("No idioms found")
+            Text(L("No idioms found"))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.ink)
                 .padding(.top, 64)
-            Text("Check your spelling or try another keyword.\nYou can also search by pinyin, e.g. shou zhu")
+            Text(L("Check your spelling or try another keyword.\nYou can also search by pinyin, e.g. shou zhu"))
                 .font(.system(size: 13))
                 .foregroundColor(.ink3)
                 .multilineTextAlignment(.center)
                 .lineSpacing(6)
                 .padding(.top, 8)
-            Button("Clear Search") {
+            Button(L("Clear Search")) {
                 query = ""
             }
             .font(.system(size: 13.5))

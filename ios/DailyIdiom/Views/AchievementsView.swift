@@ -11,7 +11,7 @@ struct AchievementsView: View {
                 let unlocked = GameCenterManager.achievementDefs.filter {
                     GameCenterManager.localProgress(for: $0.key) >= 100
                 }.count
-                Text("\(unlocked) of \(GameCenterManager.achievementDefs.count) unlocked")
+                Text(String(format: L("%d of %d unlocked"), unlocked, GameCenterManager.achievementDefs.count))
                     .font(.system(size: 13))
                     .foregroundColor(.ink2)
                     .padding(.top, 16)
@@ -21,7 +21,7 @@ struct AchievementsView: View {
                     Divider()
                 }
 
-                Text("Achievements sync with Game Center and follow your Apple ID across devices. Progress is tracked locally first, so it never gets lost when offline.")
+                Text(L("Achievements sync with Game Center and follow your Apple ID across devices. Progress is tracked locally first, so it never gets lost when offline."))
                     .font(.system(size: 12.5))
                     .foregroundColor(.ink3)
                     .lineSpacing(4)
@@ -31,7 +31,7 @@ struct AchievementsView: View {
             .padding(.bottom, 30)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("Achievements")
+        .navigationTitle(L("Achievements"))
         .navigationBarTitleDisplayMode(.inline)
     }
 

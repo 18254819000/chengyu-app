@@ -40,6 +40,7 @@
 		BB0000000000000000000043 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000016 /* SharedStore.swift */; };
 		BB0000000000000000000044 /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000017 /* DateUtil.swift */; };
 		BB0000000000000000000045 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000018 /* Theme.swift */; };
+		BB0000000000000000000116 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000116 /* Localization.swift */; };
 		BB0000000000000000000046 /* DailyIdiomWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000019 /* DailyIdiomWidget.swift */; };
 		BB0000000000000000000047 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000013 /* AppConfig.swift */; };
 		BB0000000000000000000048 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000014 /* Models.swift */; };
@@ -47,6 +48,7 @@
 		BB0000000000000000000050 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000016 /* SharedStore.swift */; };
 		BB0000000000000000000051 /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000017 /* DateUtil.swift */; };
 		BB0000000000000000000052 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000018 /* Theme.swift */; };
+		BB0000000000000000000117 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000116 /* Localization.swift */; };
 		BB0000000000000000000053 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000024 /* Assets.xcassets */; };
 		BB0000000000000000000054 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* StoreKit.framework */; };
 		BB0000000000000000000055 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000026 /* WidgetKit.framework */; };
@@ -114,6 +116,7 @@
 		AA0000000000000000000016 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		AA0000000000000000000017 /* DateUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
 		AA0000000000000000000018 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		AA0000000000000000000116 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		AA0000000000000000000019 /* DailyIdiomWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyIdiomWidget.swift; sourceTree = "<group>"; };
 		AA0000000000000000000020 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA0000000000000000000021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -221,6 +224,7 @@
 				AA0000000000000000000016 /* SharedStore.swift */,
 				AA0000000000000000000017 /* DateUtil.swift */,
 				AA0000000000000000000018 /* Theme.swift */,
+				AA0000000000000000000116 /* Localization.swift */,
 			);
 			name = Shared;
 			path = Shared;
@@ -307,6 +311,7 @@
 				BB0000000000000000000043 /* SharedStore.swift in Sources */,
 				BB0000000000000000000044 /* DateUtil.swift in Sources */,
 				BB0000000000000000000045 /* Theme.swift in Sources */,
+				BB0000000000000000000116 /* Localization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +326,7 @@
 				BB0000000000000000000050 /* SharedStore.swift in Sources */,
 				BB0000000000000000000051 /* DateUtil.swift in Sources */,
 				BB0000000000000000000052 /* Theme.swift in Sources */,
+				BB0000000000000000000117 /* Localization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

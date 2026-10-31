@@ -10,17 +10,17 @@ enum QuizDifficulty: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .easy: return "Easy"
-        case .medium: return "Medium"
-        case .hard: return "Hard"
+        case .easy: return L("Easy")
+        case .medium: return L("Medium")
+        case .hard: return L("Hard")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .easy: return "Read the idiom, choose the English meaning"
-        case .medium: return "Read the English meaning, choose the idiom"
-        case .hard: return "Read the Chinese example, choose the idiom"
+        case .easy: return L("Read the idiom, choose the English meaning")
+        case .medium: return L("Read the English meaning, choose the idiom")
+        case .hard: return L("Read the Chinese example, choose the idiom")
         }
     }
 

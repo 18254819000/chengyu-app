@@ -221,7 +221,7 @@ struct LockedIdiomView: View {
                 .font(.system(size: 34, weight: .light))
                 .foregroundColor(.ink3)
 
-            Text("Subscribers Only")
+            Text(L("Subscribers Only"))
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.ink2)
                 .padding(.top, 16)
@@ -229,7 +229,7 @@ struct LockedIdiomView: View {
             Button {
                 state.showPaywall = true
             } label: {
-                Text("Subscribe to Unlock All Idioms")
+                Text(L("Subscribe to Unlock All Idioms"))
                     .font(.system(size: 15, weight: .semibold))
                     .tracking(1)
                     .foregroundColor(.white)

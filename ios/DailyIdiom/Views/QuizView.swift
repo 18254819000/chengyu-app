@@ -25,7 +25,7 @@ struct QuizView: View {
             }
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("Chengyu Quiz")
+        .navigationTitle(L("Chengyu Quiz"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $shareItem) { item in
             ShareSheet(items: [item.image])
@@ -40,10 +40,10 @@ struct QuizView: View {
         if easyPool.count < 4 {
             VStack(spacing: 12) {
                 Spacer()
-                Text("Not Enough Content Yet")
+                Text(L("Not Enough Content Yet"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.ink)
-                Text("There aren't enough idioms available for a quiz yet. Please try again once content has finished syncing.")
+                Text(L("There aren't enough idioms available for a quiz yet. Please try again once content has finished syncing."))
                     .font(.system(size: 13))
                     .foregroundColor(.ink3)
                     .multilineTextAlignment(.center)
@@ -54,7 +54,7 @@ struct QuizView: View {
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Choose a difficulty to start")
+                    Text(L("Choose a difficulty to start"))
                         .font(.system(size: 15))
                         .foregroundColor(.ink2)
                         .padding(.top, 26)
@@ -64,7 +64,7 @@ struct QuizView: View {
                             .padding(.top, 16)
                     }
 
-                    Text("\(min(10, easyPool.count)) questions per round, with your score at the end")
+                    Text(String(format: L("%d questions per round, with your score at the end"), min(10, easyPool.count)))
                         .font(.system(size: 12.5))
                         .foregroundColor(.ink3)
                         .padding(.top, 24)
@@ -72,7 +72,7 @@ struct QuizView: View {
                     Divider()
                         .padding(.top, 28)
 
-                    Text("More games")
+                    Text(L("More games"))
                         .font(.system(size: 15))
                         .foregroundColor(.ink2)
                         .padding(.top, 22)
@@ -80,10 +80,10 @@ struct QuizView: View {
                     NavigationLink(destination: PictureGuessView()) {
                         HStack(alignment: .center, spacing: 14) {
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("Picture Guess")
+                                Text(L("Picture Guess"))
                                     .font(.system(size: 20, weight: .semibold))
                                     .foregroundColor(.ink)
-                                Text("Look at the story image, pick the idiom · Regular 10 / Endless")
+                                Text(L("Look at the story image, pick the idiom · Regular 10 / Endless"))
                                     .font(.system(size: 13))
                                     .foregroundColor(.ink3)
                             }
@@ -119,7 +119,7 @@ struct QuizView: View {
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.ink)
                         .multilineTextAlignment(.leading)
-                    Text(available ? difficulty.subtitle : "\(difficulty.subtitle) (Not enough questions)")
+                    Text(available ? difficulty.subtitle : String(format: L("%@ (Not enough questions)"), difficulty.subtitle))
                         .font(.system(size: 13))
                         .foregroundColor(.ink3)
                         .multilineTextAlignment(.leading)
@@ -127,7 +127,7 @@ struct QuizView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 if best > 0 {
-                    Text("Best: \(best)")
+                    Text(String(format: L("Best: %@"), "\(best)"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.accentRed)
                 }
@@ -356,12 +356,12 @@ struct QuizView: View {
                     .foregroundColor(.ink)
                     .padding(.top, 22)
 
-                Text("\(engine.correctCount)/\(engine.totalCount) correct · \(engine.elapsedSeconds)s")
+                Text(String(format: L("%d/%d correct · %ds"), engine.correctCount, engine.totalCount, engine.elapsedSeconds))
                     .font(.system(size: 15))
                     .foregroundColor(.ink2)
 
                 if engine.isNewRecord {
-                    Text("New Record!")
+                    Text(L("New Record!"))
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.accentRed)
                         .padding(.top, 12)
@@ -370,7 +370,7 @@ struct QuizView: View {
                 Button {
                     shareScore()
                 } label: {
-                    Text("Share My Score")
+                    Text(L("Share My Score"))
                         .font(.system(size: 15.5, weight: .semibold))
                         .tracking(1)
                         .foregroundColor(.white)
@@ -384,7 +384,7 @@ struct QuizView: View {
                 Button {
                     engine.start(difficulty: engine.difficulty, idioms: state.idioms)
                 } label: {
-                    Text("Try Again")
+                    Text(L("Try Again"))
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.ink)
                         .frame(maxWidth: .infinity)
@@ -399,7 +399,7 @@ struct QuizView: View {
                     engine.reset()
                     state.showQuiz = false
                 } label: {
-                    Text("Back to Home")
+                    Text(L("Back to Home"))
                         .font(.system(size: 14.5, weight: .medium))
                         .foregroundColor(.ink2)
                         .padding(.vertical, 10)
@@ -410,7 +410,7 @@ struct QuizView: View {
                     Button {
                         state.showPaywall = true
                     } label: {
-                        Text("Subscribe to unlock all idioms and a bigger question bank")
+                        Text(L("Subscribe to unlock all idioms and a bigger question bank"))
                             .font(.system(size: 12.5))
                             .foregroundColor(.ink3)
                             .underline()

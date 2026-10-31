@@ -97,15 +97,15 @@ struct RootView: View {
         }
         .appDialog(
             isPresented: $state.showWidgetPrompt,
-            title: "Add the Daily Widget",
-            message: "See today's idiom right on your Home Screen — no need to open the app.",
-            primaryTitle: "See How",
+            title: L("Add the Daily Widget"),
+            message: L("See today's idiom right on your Home Screen — no need to open the app."),
+            primaryTitle: L("See How"),
             primaryAction: {
                 state.showWidgetPrompt = false
                 LocalStore.hasSeenWidgetPrompt = true
                 state.showWidgetGuide = true
             },
-            secondaryTitle: "Not Now",
+            secondaryTitle: L("Not Now"),
             secondaryAction: {
                 state.showWidgetPrompt = false
                 LocalStore.hasSeenWidgetPrompt = true
@@ -113,9 +113,9 @@ struct RootView: View {
         )
         .appDialog(
             isPresented: $state.showForceUpdate,
-            title: "Update Required",
-            message: "This version is too old to continue. Please update to the latest version.",
-            primaryTitle: "Update on the App Store",
+            title: L("Update Required"),
+            message: L("This version is too old to continue. Please update to the latest version."),
+            primaryTitle: L("Update on the App Store"),
             primaryAction: {
                 // 单按钮、无次按钮、遮罩不可点消：不更新就一直挡着；
                 // 跳商店后回 App 若仍是旧版本，弹窗仍在；升到新版本后同步判断自动清除。
@@ -166,18 +166,18 @@ private struct NewIdiomsCardView: View {
                     .frame(width: 27, height: 27)
                     .background(Color.accentRed)
                     .clipShape(RoundedRectangle(cornerRadius: 7))
-                Text("NEW ARRIVALS")
+                Text(L("NEW ARRIVALS"))
                     .font(.system(size: 11, weight: .bold))
                     .tracking(2.6)
                     .foregroundColor(.accentRed)
             }
 
-            Text("New Idioms Are Here")
+            Text(L("New Idioms Are Here"))
                 .font(.system(size: 20.5, weight: .bold))
                 .foregroundColor(.ink)
                 .padding(.top, 14)
 
-            Text("\(totalCount) new idioms have been added to your collection. Come and meet them.")
+            Text(String(format: L("%d new idioms have been added to your collection. Come and meet them."), totalCount))
                 .font(.system(size: 13.5))
                 .foregroundColor(.ink2)
                 .lineSpacing(5)
@@ -197,7 +197,7 @@ private struct NewIdiomsCardView: View {
                                 .foregroundColor(.ink3)
                         }
                         Spacer()
-                        Text("NEW")
+                        Text(L("NEW"))
                             .font(.system(size: 9.5, weight: .bold))
                             .tracking(0.9)
                             .foregroundColor(.white)
@@ -218,14 +218,14 @@ private struct NewIdiomsCardView: View {
             .padding(.top, 16)
 
             if totalCount > 3 {
-                Text("+ \(totalCount - 3) more in All Idioms")
+                Text(String(format: L("+ %d more in All Idioms"), totalCount - 3))
                     .font(.system(size: 12.5))
                     .foregroundColor(.ink3)
                     .padding(.top, 10)
             }
 
             Button(action: onTakeALook) {
-                Text("Take a Look")
+                Text(L("Take a Look"))
                     .font(.system(size: 15.5, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -237,7 +237,7 @@ private struct NewIdiomsCardView: View {
             .padding(.top, 22)
 
             Button(action: onLater) {
-                Text("Later")
+                Text(L("Later"))
                     .font(.system(size: 14))
                     .foregroundColor(.ink3)
                     .frame(maxWidth: .infinity)

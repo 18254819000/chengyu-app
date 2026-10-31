@@ -263,8 +263,8 @@ final class AppState: ObservableObject {
             syncError = nil
         } catch {
             syncError = idioms.isEmpty
-                ? "Couldn't load content. Check your connection and try again."
-                : "You're offline. Showing cached content."
+                ? L("Couldn't load content. Check your connection and try again.")
+                : L("You're offline. Showing cached content.")
             // 断网兜底：用本地缓存与轮换公式定位当日成语，小组件继续用共享缓存；
             // 免费用户顺带按本地公式刷新锁定标记（昨日缓存的标记已过期），不写缓存，下次同步以后端为准
             if !isEntitled {

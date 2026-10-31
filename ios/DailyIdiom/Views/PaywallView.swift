@@ -36,11 +36,11 @@ struct PaywallView: View {
                 .padding(.bottom, 30)
             }
             .background(Color.paperBg.ignoresSafeArea())
-            .navigationTitle("Subscribe")
+            .navigationTitle(L("Subscribe"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Close") { presentationMode.wrappedValue.dismiss() }
+                    Button(L("Close")) { presentationMode.wrappedValue.dismiss() }
                         .foregroundColor(.ink2)
                 }
             }
@@ -61,9 +61,9 @@ struct PaywallView: View {
         }
         .appDialog(
             isPresented: messageBinding,
-            title: "Notice",
+            title: L("Notice"),
             message: store.message ?? "",
-            primaryTitle: "OK",
+            primaryTitle: L("OK"),
             primaryAction: { store.message = nil }
         )
     }
@@ -79,11 +79,11 @@ struct PaywallView: View {
 
     private var hero: some View {
         VStack(alignment: .leading, spacing: 8) {
-            (Text("Unlock ") + Text("All Idioms").foregroundColor(.accentRed))
+            (Text(L("Unlock ")) + Text(L("All Idioms")).foregroundColor(.accentRed))
                 .font(.system(size: 26, weight: .bold))
-            Text("One idiom a day adds up.")
+            Text(L("One idiom a day adds up."))
                 .font(.system(size: 26, weight: .bold))
-            Text("Subscribe to access the full idiom library, including every new idiom we add.")
+            Text(L("Subscribe to access the full idiom library, including every new idiom we add."))
                 .font(.system(size: 13.5))
                 .foregroundColor(.ink2)
                 .lineSpacing(5)
@@ -94,7 +94,7 @@ struct PaywallView: View {
     // MARK: 免费档说明（订阅说明白：不订阅也能每天体验一个成语）
 
     private var freeTierNote: some View {
-        Text("No subscription? No problem — you can still enjoy one free idiom every day on the Home page. It changes daily.")
+        Text(L("No subscription? No problem — you can still enjoy one free idiom every day on the Home page. It changes daily."))
             .font(.system(size: 13.5))
             .foregroundColor(.ink2)
             .lineSpacing(5)
@@ -108,13 +108,13 @@ struct PaywallView: View {
 
     private var comparisonTable: some View {
         VStack(spacing: 0) {
-            compareRow(name: "", free: "Free", pro: "Premium", isHeader: true)
+            compareRow(name: "", free: L("Free"), pro: L("Premium"), isHeader: true)
             Divider().overlay(Color.line)
-            compareRow(name: "Idioms to learn", free: "1 per day", pro: "All", isHeader: false)
+            compareRow(name: L("Idioms to learn"), free: L("1 per day"), pro: L("All"), isHeader: false)
             Divider().overlay(Color.line)
-            compareRow(name: "Full example sentences", free: "Today's idiom", pro: "All", isHeader: false)
+            compareRow(name: L("Full example sentences"), free: L("Today's idiom"), pro: L("All"), isHeader: false)
             Divider().overlay(Color.line)
-            compareRow(name: "New idioms as they're added", free: "—", pro: "Unlocked automatically", isHeader: false)
+            compareRow(name: L("New idioms as they're added"), free: "—", pro: L("Unlocked automatically"), isHeader: false)
         }
         .background(Color.cardBg)
         .cornerRadius(16)
@@ -145,7 +145,7 @@ struct PaywallView: View {
             if store.products.isEmpty {
                 HStack(spacing: 10) {
                     ProgressView()
-                    Text("Loading plans…")
+                    Text(L("Loading plans…"))
                         .font(.system(size: 13.5))
                         .foregroundColor(.ink3)
                 }
@@ -166,7 +166,7 @@ struct PaywallView: View {
         } label: {
             VStack(alignment: .leading, spacing: 5) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text(isYearly ? "Yearly" : "Monthly")
+                    Text(isYearly ? L("Yearly") : L("Monthly"))
                         .font(.system(size: 15.5, weight: .bold))
                         .foregroundColor(.ink)
                     Spacer()
@@ -174,7 +174,7 @@ struct PaywallView: View {
                         Text(product.displayPrice)
                             .font(.system(size: 21, weight: .bold))
                             .foregroundColor(.ink)
-                        Text(isYearly ? "/ year" : "/ month")
+                        Text(isYearly ? L("/ year") : L("/ month"))
                             .font(.system(size: 12.5))
                             .foregroundColor(.ink2)
                     }
@@ -186,7 +186,7 @@ struct PaywallView: View {
                             .fontWeight(.semibold)
                         Text("·")
                     }
-                    Text(isYearly ? "About \(monthlyEquivalent(of: product))/month" : "Cancel anytime")
+                    Text(isYearly ? String(format: L("About %@/month"), monthlyEquivalent(of: product)) : L("Cancel anytime"))
                 }
                 .font(.system(size: 12.5))
                 .foregroundColor(.ink2)
@@ -201,7 +201,7 @@ struct PaywallView: View {
             )
             .overlay(alignment: .topTrailing) {
                 if isYearly {
-                    Text("Best Value")
+                    Text(L("Best Value"))
                         .font(.system(size: 10.5, weight: .bold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 9)
@@ -250,9 +250,9 @@ struct PaywallView: View {
     private var buyButtonTitle: String {
         guard let product = selectedProduct,
               store.trialDescription(for: product) != nil else {
-            return "Subscribe Now"
+            return L("Subscribe Now")
         }
-        return "Start Free Trial"
+        return L("Start Free Trial")
     }
 
     private var restoreButton: some View {
@@ -263,7 +263,7 @@ struct PaywallView: View {
                 if store.isRestoring {
                     ProgressView()
                 }
-                Text("Restore Purchases")
+                Text(L("Restore Purchases"))
                     .font(.system(size: 13.5))
             }
             .foregroundColor(.ink2)
@@ -280,7 +280,7 @@ struct PaywallView: View {
         Button {
             SKPaymentQueue.default().presentCodeRedemptionSheet()
         } label: {
-            Text("Redeem Code")
+            Text(L("Redeem Code"))
                 .font(.system(size: 13.5))
                 .foregroundColor(.ink2)
                 .frame(maxWidth: .infinity)
@@ -292,15 +292,15 @@ struct PaywallView: View {
 
     private var legal: some View {
         VStack(spacing: 8) {
-            Text("Payment will be charged to your Apple ID at confirmation of purchase. Your subscription automatically renews unless canceled at least 24 hours before the end of the current period, and your account will be charged for renewal within 24 hours prior to that. You can manage or cancel your subscription anytime in your App Store account settings.")
+            Text(L("Payment will be charged to your Apple ID at confirmation of purchase. Your subscription automatically renews unless canceled at least 24 hours before the end of the current period, and your account will be charged for renewal within 24 hours prior to that. You can manage or cancel your subscription anytime in your App Store account settings."))
                 .font(.system(size: 11))
                 .foregroundColor(.ink3)
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
             HStack(spacing: 6) {
-                Button("Privacy Policy") { state.openWeb(AppConfig.privacyPolicyURL) }
+                Button(L("Privacy Policy")) { state.openWeb(AppConfig.privacyPolicyURL) }
                 Text("·").foregroundColor(.ink3)
-                Button("Terms of Use") { state.openWeb(AppConfig.termsOfUseURL) }
+                Button(L("Terms of Use")) { state.openWeb(AppConfig.termsOfUseURL) }
             }
             .font(.system(size: 11))
             .foregroundColor(.ink2)

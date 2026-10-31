@@ -9,21 +9,21 @@ struct WidgetGuideView: View {
                     .padding(.top, 10)
 
                 step(number: 1,
-                     title: "Touch and hold the Home Screen",
-                     detail: "Touch and hold an empty area on your Home Screen until the app icons start to jiggle.")
+                     title: L("Touch and hold the Home Screen"),
+                     detail: L("Touch and hold an empty area on your Home Screen until the app icons start to jiggle."))
                 step(number: 2,
-                     title: "Tap the \"+\" button",
-                     detail: "Scroll down the widget list, find \"Daily Chengyu\", and tap it.")
+                     title: L("Tap the \"+\" button"),
+                     detail: L("Scroll down the widget list, find \"Daily Chengyu\", and tap it."))
                 step(number: 3,
-                     title: "Choose the medium size and add it",
-                     detail: "Swipe to the medium size, tap \"Add Widget\", then tap \"Done\". A new idiom will be waiting on your Home Screen every day.")
+                     title: L("Choose the medium size and add it"),
+                     detail: L("Swipe to the medium size, tap \"Add Widget\", then tap \"Done\". A new idiom will be waiting on your Home Screen every day."))
 
                 Spacer(minLength: 20)
             }
             .padding(.horizontal, 22)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("Add the Widget")
+        .navigationTitle(L("Add the Widget"))
         .navigationBarTitleDisplayMode(.inline)
     }
 

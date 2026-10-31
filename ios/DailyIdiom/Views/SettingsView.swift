@@ -11,7 +11,7 @@ struct SettingsView: View {
 
     var body: some View {
         List {
-            Section(header: Text("SUBSCRIPTION")) {
+            Section(header: Text(L("SUBSCRIPTION"))) {
                 subscriptionRow
                 actionRow(icon: "arrow.clockwise", iconColor: .gray, "Restore Purchases", trailing: store.isRestoring ? "Restoring…" : nil) {
                     Task { await store.restorePurchases() }
@@ -25,44 +25,44 @@ struct SettingsView: View {
             }
             // 学习功能只对订阅用户：免费用户没有打卡、日历、复习、排行榜、成就，整个 section 隐藏
             if state.isEntitled {
-                Section(header: Text("LEARNING")) {
+                Section(header: Text(L("LEARNING"))) {
                 NavigationLink {
                     CheckInCalendarView()
                 } label: {
-                    rowContent(icon: "flame.fill", iconColor: .orange, title: "Check-in Calendar", trailing: state.streakDays > 0 ? "\(state.streakDays) days" : nil)
+                    rowContent(icon: "flame.fill", iconColor: .orange, title: L("Check-in Calendar"), trailing: state.streakDays > 0 ? String(format: L("%d days"), state.streakDays) : nil)
                 }
                 NavigationLink {
                     ReviewView()
                 } label: {
-                    rowContent(icon: "book.fill", iconColor: .green, title: "Review", trailing: nil)
+                    rowContent(icon: "book.fill", iconColor: .green, title: L("Review"), trailing: nil)
                 }
                 NavigationLink {
                     LeaderboardView()
                 } label: {
-                    rowContent(icon: "trophy.fill", iconColor: .yellow, title: "Leaderboard", trailing: nil)
+                    rowContent(icon: "trophy.fill", iconColor: .yellow, title: L("Leaderboard"), trailing: nil)
                 }
                 NavigationLink {
                     AchievementsView()
                 } label: {
-                    rowContent(icon: "crown.fill", iconColor: .indigo, title: "Achievements", trailing: nil)
+                    rowContent(icon: "crown.fill", iconColor: .indigo, title: L("Achievements"), trailing: nil)
                 }
                 }
             }
-            Section(header: Text("HOME SCREEN")) {
+            Section(header: Text(L("HOME SCREEN"))) {
                 NavigationLink {
                     WidgetGuideView()
                 } label: {
-                    rowContent(icon: "square.grid.2x2.fill", iconColor: .teal, title: "Add Widget to Home Screen", trailing: nil)
+                    rowContent(icon: "square.grid.2x2.fill", iconColor: .teal, title: L("Add Widget to Home Screen"), trailing: nil)
                 }
             }
-            Section(header: Text("ABOUT"), footer: Text("Daily Chengyu · Version \(AppConfig.appVersion)")) {
-                actionRow(icon: "lock.fill", iconColor: .blue, "Privacy Policy") {
+            Section(header: Text(L("ABOUT")), footer: Text(String(format: L("Daily Chengyu · Version %@"), AppConfig.appVersion))) {
+                actionRow(icon: "lock.fill", iconColor: .blue, L("Privacy Policy")) {
                     state.openWeb(AppConfig.privacyPolicyURL)
                 }
-                actionRow(icon: "doc.text.fill", iconColor: .gray, "Terms of Use") {
+                actionRow(icon: "doc.text.fill", iconColor: .gray, L("Terms of Use")) {
                     state.openWeb(AppConfig.termsOfUseURL)
                 }
-                actionRow(icon: "envelope.fill", iconColor: .pink, "Contact Us") {
+                actionRow(icon: "envelope.fill", iconColor: .pink, L("Contact Us")) {
                     if let url = URL(string: "mailto:\(AppConfig.supportEmail)") {
                         openURL(url)
                     }
@@ -70,16 +70,16 @@ struct SettingsView: View {
                 NavigationLink {
                     AboutView()
                 } label: {
-                    rowContent(icon: "info.circle.fill", iconColor: .gray, title: "About Daily Chengyu", trailing: nil)
+                    rowContent(icon: "info.circle.fill", iconColor: .gray, title: L("About Daily Chengyu"), trailing: nil)
                 }
             }
         }
         .listStyle(InsetGroupedListStyle())
         .appDialog(
             isPresented: messageBinding,
-            title: "Notice",
+            title: L("Notice"),
             message: store.message ?? "",
-            primaryTitle: "OK",
+            primaryTitle: L("OK"),
             primaryAction: { store.message = nil }
         )
     }
@@ -103,7 +103,7 @@ struct SettingsView: View {
         } label: {
             HStack(spacing: 12) {
                 iconView("star.fill", color: .accentRed)
-                Text("My Subscription")
+                Text(L("My Subscription"))
                     .font(.system(size: 17))
                     .foregroundColor(.ink)
                 Spacer()
@@ -121,14 +121,14 @@ struct SettingsView: View {
     }
 
     private var subscriptionStatusText: String {
-        guard state.isEntitled else { return "Not Subscribed · Subscribe" }
+        guard state.isEntitled else { return L("Not Subscribed · Subscribe") }
         if let date = state.entitlement?.expiresDate {
             let f = DateFormatter()
-            f.locale = Locale(identifier: "en_US")
+            f.locale = AppLanguage.displayLocale
             f.dateFormat = "MMM d, yyyy"
-            return "Subscribed · Expires \(f.string(from: date))"
+            return String(format: L("Subscribed · Expires %@"), f.string(from: date))
         }
-        return "Subscribed"
+        return L("Subscribed")
     }
 
     // MARK: 通用行（iOS 设置风格：彩色圆角图标 + 标题 + 右侧值 + 箭头）

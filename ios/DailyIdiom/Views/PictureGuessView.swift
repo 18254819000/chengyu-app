@@ -29,7 +29,7 @@ struct PictureGuessView: View {
             }
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("Picture Guess")
+        .navigationTitle(L("Picture Guess"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $shareItem) { item in
             ShareSheet(items: [item.image])
@@ -49,10 +49,10 @@ struct PictureGuessView: View {
         if pool.count < 4 {
             VStack(spacing: 12) {
                 Spacer()
-                Text("Not Enough Pictures Yet")
+                Text(L("Not Enough Pictures Yet"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.ink)
-                Text("There aren't enough illustrated idioms available yet. Please try again once content has finished syncing.")
+                Text(L("There aren't enough illustrated idioms available yet. Please try again once content has finished syncing."))
                     .font(.system(size: 13))
                     .foregroundColor(.ink3)
                     .multilineTextAlignment(.center)
@@ -63,7 +63,7 @@ struct PictureGuessView: View {
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Look at the story image, pick the idiom")
+                    Text(L("Look at the story image, pick the idiom"))
                         .font(.system(size: 15))
                         .foregroundColor(.ink2)
                         .padding(.top, 26)
@@ -73,7 +73,7 @@ struct PictureGuessView: View {
                             .padding(.top, 16)
                     }
 
-                    Text("Picture pool: \(pool.count) illustrated idioms · wrong answers go to your mistake book")
+                    Text(String(format: L("Picture pool: %d illustrated idioms · wrong answers go to your mistake book"), pool.count))
                         .font(.system(size: 12.5))
                         .foregroundColor(.ink3)
                         .padding(.top, 24)
@@ -102,11 +102,11 @@ struct PictureGuessView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 if mode == .regular, LocalStore.pictureRegularBest > 0 {
-                    Text("Best: \(LocalStore.pictureRegularBest)/10")
+                    Text(String(format: L("Best: %@/10"), "\(LocalStore.pictureRegularBest)"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.accentRed)
                 } else if mode == .endless, LocalStore.pictureEndlessBest > 0 {
-                    Text("Best: \(LocalStore.pictureEndlessBest)")
+                    Text(String(format: L("Best: %@"), "\(LocalStore.pictureEndlessBest)"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.accentRed)
                 }
@@ -148,7 +148,7 @@ struct PictureGuessView: View {
                                 state.gameCenter.syncProgress()
                                 showingStory = true
                             } label: {
-                                Text("View Story")
+                                Text(L("View Story"))
                                     .font(.system(size: 15, weight: .semibold))
                                     .foregroundColor(.accentRed)
                                     .frame(maxWidth: .infinity)
@@ -195,7 +195,7 @@ struct PictureGuessView: View {
                         .font(.system(size: 12.5))
                         .foregroundColor(.ink3)
                 } else {
-                    Text("Streak \(engine.currentStreak)")
+                    Text(String(format: L("Streak %d"), engine.currentStreak))
                         .font(.system(size: 12.5, weight: .semibold))
                         .foregroundColor(.accentRed)
                 }
@@ -220,7 +220,7 @@ struct PictureGuessView: View {
 
     private func picturePrompt(_ question: PictureQuestion) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Which idiom does this picture tell?")
+            Text(L("Which idiom does this picture tell?"))
                 .font(.system(size: 13))
                 .foregroundColor(.ink3)
             if let urlString = question.subject.imageUrl, let url = URL(string: urlString) {
@@ -233,7 +233,7 @@ struct PictureGuessView: View {
                     case .failure:
                         ZStack {
                             Color.cardBg
-                            Text("Image unavailable")
+                            Text(L("Image unavailable"))
                                 .font(.system(size: 13))
                                 .foregroundColor(.ink3)
                         }
@@ -241,7 +241,7 @@ struct PictureGuessView: View {
                     default:
                         ZStack {
                             Color.cardBg
-                            Text("Loading image…")
+                            Text(L("Loading image…"))
                                 .font(.system(size: 13))
                                 .foregroundColor(.ink3)
                         }
@@ -317,7 +317,7 @@ struct PictureGuessView: View {
     private var resultView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
-                Text("PICTURE GUESS · \(engine.mode.title.uppercased())")
+                Text(L("PICTURE GUESS") + " · " + engine.mode.title.uppercased())
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.accentRed)
                     .padding(.horizontal, 16)
@@ -331,7 +331,7 @@ struct PictureGuessView: View {
                         .font(.system(size: 88, weight: .bold))
                         .foregroundColor(.ink)
                         .padding(.top, 22)
-                    Text("correct · \(engine.elapsedSeconds)s")
+                    Text(String(format: L("correct · %ds"), engine.elapsedSeconds))
                         .font(.system(size: 15))
                         .foregroundColor(.ink2)
                 } else {
@@ -339,13 +339,13 @@ struct PictureGuessView: View {
                         .font(.system(size: 88, weight: .bold))
                         .foregroundColor(.ink)
                         .padding(.top, 22)
-                    Text("longest streak · \(engine.correctCount) correct · \(engine.elapsedSeconds)s")
+                    Text(String(format: L("longest streak · %d correct · %ds"), engine.correctCount, engine.elapsedSeconds))
                         .font(.system(size: 15))
                         .foregroundColor(.ink2)
                 }
 
                 if engine.isNewRecord {
-                    Text("New Record!")
+                    Text(L("New Record!"))
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.accentRed)
                         .padding(.top, 12)
@@ -353,7 +353,7 @@ struct PictureGuessView: View {
 
                 if !engine.missedSubjects.isEmpty {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Review your misses (\(engine.missedSubjects.count))")
+                        Text(String(format: L("Review your misses (%d)"), engine.missedSubjects.count))
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.ink)
                             .padding(.top, 30)
@@ -364,7 +364,7 @@ struct PictureGuessView: View {
                                     .font(.system(size: 15, weight: .semibold))
                                     .foregroundColor(.ink)
                                 Spacer()
-                                Button("Story →") {
+                                Button(L("Story →")) {
                                     storySubject = idiom
                                     LocalStore.recordStoryRead(id: idiom.id)
                                     state.gameCenter.syncProgress()
@@ -382,7 +382,7 @@ struct PictureGuessView: View {
                 Button {
                     shareScore()
                 } label: {
-                    Text("Share My Score")
+                    Text(L("Share My Score"))
                         .font(.system(size: 15.5, weight: .semibold))
                         .tracking(1)
                         .foregroundColor(.white)
@@ -396,7 +396,7 @@ struct PictureGuessView: View {
                 Button {
                     engine.start(mode: engine.mode, idioms: state.idioms)
                 } label: {
-                    Text("Play Again")
+                    Text(L("Play Again"))
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.ink)
                         .frame(maxWidth: .infinity)
@@ -411,7 +411,7 @@ struct PictureGuessView: View {
                     engine.reset()
                     dismiss()
                 } label: {
-                    Text("Back to Games")
+                    Text(L("Back to Games"))
                         .font(.system(size: 14.5, weight: .medium))
                         .foregroundColor(.ink2)
                         .padding(.vertical, 10)
@@ -422,7 +422,7 @@ struct PictureGuessView: View {
                     Button {
                         state.showPaywall = true
                     } label: {
-                        Text("Subscribe to unlock all 114 illustrated idioms")
+                        Text(L("Subscribe to unlock all 114 illustrated idioms"))
                             .font(.system(size: 12.5))
                             .foregroundColor(.ink3)
                             .underline()

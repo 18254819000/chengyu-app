@@ -53,7 +53,7 @@ struct LearnView: View {
         HStack(spacing: 10) {
             Image(systemName: "chevron.left")
                 .foregroundColor(.accentRed)
-            Text("Swipe to explore more idioms")
+            Text(L("Swipe to explore more idioms"))
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.ink)
             Image(systemName: "chevron.right")
@@ -124,7 +124,7 @@ struct LearnView: View {
             HStack(spacing: 6) {
                 Text("🔥")
                     .font(.system(size: 14))
-                Text(state.streakDays > 0 ? "\(state.streakDays)-day streak" : "Start your streak today")
+                Text(state.streakDays > 0 ? String(format: L("%d-day streak"), state.streakDays) : L("Start your streak today"))
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.accentRed)
             }
@@ -141,7 +141,7 @@ struct LearnView: View {
     /// 个人中心页（设置内容复用 SettingsView），推入时带系统导航栏与标题
     private var settingsDestination: some View {
         SettingsView()
-            .navigationTitle("Profile")
+            .navigationTitle(L("Profile"))
             .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -190,7 +190,7 @@ struct LearnView: View {
                     VStack(spacing: 12) {
                         Spacer()
                         ProgressView()
-                        Text("Loading today's idiom…")
+                        Text(L("Loading today's idiom…"))
                             .font(.system(size: 14))
                             .foregroundColor(.ink3)
                         Spacer()
@@ -227,15 +227,15 @@ struct LearnView: View {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 32, weight: .light))
                 .foregroundColor(.ink3)
-            Text("Today's idiom isn't available offline yet")
+            Text(L("Today's idiom isn't available offline yet"))
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.ink)
-            Text("Connect to the internet and reopen the app to load today's free idiom.")
+            Text(L("Connect to the internet and reopen the app to load today's free idiom."))
                 .font(.system(size: 13.5))
                 .foregroundColor(.ink3)
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
-            Button("Retry") {
+            Button(L("Retry")) {
                 Task { await state.sync() }
             }
             .font(.system(size: 14, weight: .semibold))
@@ -256,15 +256,15 @@ struct LearnView: View {
             Spacer()
             if state.isSyncing {
                 ProgressView()
-                Text("Loading idioms…")
+                Text(L("Loading idioms…"))
                     .font(.system(size: 14))
                     .foregroundColor(.ink3)
             } else {
-                Text(state.syncError ?? "No content yet")
+                Text(state.syncError ?? L("No content yet"))
                     .font(.system(size: 15))
                     .foregroundColor(.ink2)
                     .multilineTextAlignment(.center)
-                Button("Retry") {
+                Button(L("Retry")) {
                     Task { await state.sync() }
                 }
                 .font(.system(size: 14, weight: .semibold))

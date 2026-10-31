@@ -15,9 +15,9 @@ struct LeaderboardView: View {
 
         var title: String {
             switch self {
-            case .streak: return "Longest streak"
-            case .checkins: return "Check-in days"
-            case .quiz: return "Quiz best"
+            case .streak: return L("Longest streak")
+            case .checkins: return L("Check-in days")
+            case .quiz: return L("Quiz best")
             }
         }
 
@@ -31,9 +31,9 @@ struct LeaderboardView: View {
 
         var sortNote: String {
             switch self {
-            case .streak: return "Sorted by longest endless streak, highest first"
-            case .checkins: return "Sorted by total check-in days, highest first"
-            case .quiz: return "Sorted by best single-round quiz score, highest first"
+            case .streak: return L("Sorted by longest endless streak, highest first")
+            case .checkins: return L("Sorted by total check-in days, highest first")
+            case .quiz: return L("Sorted by best single-round quiz score, highest first")
             }
         }
 
@@ -71,7 +71,7 @@ struct LeaderboardView: View {
                 } else if let result = result, !result.entries.isEmpty {
                     leaderboardList(result)
                 } else {
-                    Text("No scores yet — be the first on this board!")
+                    Text(L("No scores yet — be the first on this board!"))
                         .font(.system(size: 14))
                         .foregroundColor(.ink2)
                         .multilineTextAlignment(.center)
@@ -82,7 +82,7 @@ struct LeaderboardView: View {
                 Button {
                     state.gameCenter.presentGameCenter(state: .leaderboards)
                 } label: {
-                    Text("View in Game Center ↗")
+                    Text(L("View in Game Center ↗"))
                         .font(.system(size: 14.5, weight: .medium))
                         .foregroundColor(.ink2)
                         .padding(.vertical, 10)
@@ -93,7 +93,7 @@ struct LeaderboardView: View {
             .padding(.top, 16)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("Leaderboard")
+        .navigationTitle(L("Leaderboard"))
         .navigationBarTitleDisplayMode(.inline)
         .task(id: board) { await load() }
         .task(id: timeScope) { await load() }
@@ -123,8 +123,8 @@ struct LeaderboardView: View {
 
     private var timeToggle: some View {
         HStack(spacing: 8) {
-            timeButton("All time", scope: .allTime)
-            timeButton("This week", scope: .week)
+            timeButton(L("All time"), scope: .allTime)
+            timeButton(L("This week"), scope: .week)
         }
         .padding(.top, 12)
     }
@@ -161,7 +161,7 @@ struct LeaderboardView: View {
                 .padding(.vertical, 8)
                 rankRow(local, highlighted: true)
             }
-            Text("\(result.totalCount) players on this board")
+            Text(String(format: L("%d players on this board"), result.totalCount))
                 .font(.system(size: 12.5))
                 .foregroundColor(.ink3)
                 .padding(.top, 14)
@@ -191,11 +191,11 @@ struct LeaderboardView: View {
 
     private var unauthenticatedBlock: some View {
         VStack(spacing: 0) {
-            Text("Your best on this board: \(board.localBest)")
+            Text(String(format: L("Your best on this board: %@"), "\(board.localBest)"))
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.ink)
                 .padding(.top, 30)
-            Text("Sign in to Game Center to see the global leaderboard and rank against other players.")
+            Text(L("Sign in to Game Center to see the global leaderboard and rank against other players."))
                 .font(.system(size: 13))
                 .foregroundColor(.ink2)
                 .multilineTextAlignment(.center)
@@ -203,7 +203,7 @@ struct LeaderboardView: View {
             Button {
                 state.gameCenter.retryAuthentication()
             } label: {
-                Text("Sign in to Game Center")
+                Text(L("Sign in to Game Center"))
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)

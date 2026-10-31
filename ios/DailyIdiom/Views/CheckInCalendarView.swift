@@ -25,7 +25,7 @@ struct CheckInCalendarView: View {
                    let idiom = idiom(for: day) {
                     dayCard(day: day, idiom: idiom)
                 }
-                Text("Checked days are marked red. A missed day breaks the streak — there is no make-up in this version.")
+                Text(L("Checked days are marked red. A missed day breaks the streak — there is no make-up in this version."))
                     .font(.system(size: 12.5))
                     .foregroundColor(.ink3)
                     .lineSpacing(4)
@@ -36,7 +36,7 @@ struct CheckInCalendarView: View {
             .padding(.bottom, 30)
         }
         .background(Color.paperBg.ignoresSafeArea())
-        .navigationTitle("Check-in")
+        .navigationTitle(L("Check-in"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -44,9 +44,9 @@ struct CheckInCalendarView: View {
 
     private var statsRow: some View {
         HStack(spacing: 10) {
-            statBox(value: "🔥 \(state.streakDays)", label: "day streak")
-            statBox(value: "\(LocalStore.totalCheckInDays)", label: "total days")
-            statBox(value: "\(Set(LocalStore.learnedIdiomIds).count)", label: "idioms learned")
+            statBox(value: "🔥 \(state.streakDays)", label: L("day streak"))
+            statBox(value: "\(LocalStore.totalCheckInDays)", label: L("total days"))
+            statBox(value: "\(Set(LocalStore.learnedIdiomIds).count)", label: L("idioms learned"))
         }
     }
 
@@ -91,7 +91,7 @@ struct CheckInCalendarView: View {
 
     private var monthTitle: String {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US")
+        f.locale = AppLanguage.displayLocale
         f.dateFormat = "MMMM yyyy"
         var comps = DateComponents()
         comps.year = year
@@ -118,7 +118,7 @@ struct CheckInCalendarView: View {
         let todayString = LocalStore.dayString()
         return AnyView(
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 6) {
-                ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { h in
+                ForEach(AppLanguage.weekdayHeaders, id: \.self) { h in
                     Text(h)
                         .font(.system(size: 11.5))
                         .foregroundColor(.ink3)
@@ -180,7 +180,7 @@ struct CheckInCalendarView: View {
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.ink)
             if idiom.locked {
-                Text("This idiom is locked — subscribe to read it.")
+                Text(L("This idiom is locked — subscribe to read it."))
                     .font(.system(size: 13))
                     .foregroundColor(.ink2)
             } else {
@@ -192,7 +192,7 @@ struct CheckInCalendarView: View {
             Button {
                 state.selectIdiom(id: idiom.id)
             } label: {
-                Text("Open in Home →")
+                Text(L("Open in Home →"))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.accentRed)
             }
