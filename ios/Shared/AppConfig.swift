@@ -9,7 +9,7 @@ enum AppConfig {
     static let apiPrefix = "/api/v1"
 
     /// App Group：App 与小组件共享数据的容器，两个 Target 的 entitlements 必须一致
-    static let appGroupID = "group.com.mengma.dailyidiom"
+    static let appGroupID = "group.com.mengma.dailyidiom2"
 
     /// 深链接 Scheme（与 App Info.plist 的 CFBundleURLSchemes 一致）
     static let urlScheme = "dailyidiom"

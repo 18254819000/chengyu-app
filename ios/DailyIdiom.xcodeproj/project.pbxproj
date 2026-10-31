@@ -50,6 +50,7 @@
 		BB0000000000000000000052 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000018 /* Theme.swift */; };
 		BB0000000000000000000117 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000116 /* Localization.swift */; };
 		BB0000000000000000000053 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000024 /* Assets.xcassets */; };
+		BB0000000000000000000118 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000117 /* LaunchScreen.storyboard */; };
 		BB0000000000000000000054 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* StoreKit.framework */; };
 		BB0000000000000000000055 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000026 /* WidgetKit.framework */; };
 		BB0000000000000000000056 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000027 /* SwiftUI.framework */; };
@@ -119,6 +120,7 @@
 		AA0000000000000000000116 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		AA0000000000000000000019 /* DailyIdiomWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyIdiomWidget.swift; sourceTree = "<group>"; };
 		AA0000000000000000000020 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA0000000000000000000117 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA0000000000000000000021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA0000000000000000000022 /* DailyIdiom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyIdiom.entitlements; sourceTree = "<group>"; };
 		AA0000000000000000000023 /* DailyIdiomWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyIdiomWidget.entitlements; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				AA0000000000000000000024 /* Assets.xcassets */,
 				AA0000000000000000000022 /* DailyIdiom.entitlements */,
 				AA0000000000000000000020 /* Info.plist */,
+				AA0000000000000000000117 /* LaunchScreen.storyboard */,
 			);
 			name = DailyIdiom;
 			path = DailyIdiom;
@@ -338,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB0000000000000000000053 /* Assets.xcassets in Resources */,
+				BB0000000000000000000118 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

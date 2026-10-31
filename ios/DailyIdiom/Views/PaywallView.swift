@@ -66,6 +66,19 @@ struct PaywallView: View {
             primaryTitle: L("OK"),
             primaryAction: { store.message = nil }
         )
+        // 订阅页本身就是 RootView 弹出的 Sheet：系统一次只允许一层 Sheet，
+        // 协议链接若只走 RootView 的 presentedWebURL Sheet 会被挡住（点了没反应，
+        // 退出订阅页后才突然弹出）。因此在订阅页内再挂一层同状态的 Sheet：
+        // 订阅页在最上层时由这一层弹出；关闭时把 presentedWebURL 清空，
+        // RootView 那一层就不会重复弹出。设置页等非 Sheet 页面仍走 RootView 那一层。
+        .sheet(isPresented: Binding(
+            get: { state.presentedWebURL != nil },
+            set: { if !$0 { state.presentedWebURL = nil } }
+        )) {
+            if let url = state.presentedWebURL {
+                SafariView(url: url)
+            }
+        }
     }
 
     private var messageBinding: Binding<Bool> {

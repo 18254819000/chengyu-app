@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>zh_CN</string>
 	<key>CFBundleDisplayName</key>
-	<string>Daily Chengyu</string>
+	<string>Daily-Chengyu</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,17 +45,8 @@
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
-	<key>UILaunchScreen</key>
-	<dict>
-		<!-- 指定启动屏背景色（资源目录中的 LaunchBackground，与纸面色一致）；
-		     缺此配置时系统按兼容模式渲染，真机上下会出现黑块。
-		     UIImageName 为资源目录中的 AppLogo 图（愚公移山，与应用图标同图）：
-		     系统启动屏只呈现图 + 底色、居中显示，欢迎语由应用内欢迎页（SplashView）承接 -->
-		<key>UIColorName</key>
-		<string>LaunchBackground</string>
-		<key>UIImageName</key>
-		<string>AppLogo</string>
-	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

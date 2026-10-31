@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 应用介绍页：由个人中心（SettingsView）的「About Daily Chengyu」入口推入。
+/// 应用介绍页：由个人中心（SettingsView）的「About Daily-Chengyu」入口推入。
 /// 顶部 Logo + 应用名 + 版本号，中段四段介绍（含图标故事），底部联系邮箱。
 struct AboutView: View {
     var body: some View {
@@ -13,7 +13,7 @@ struct AboutView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 110 * 0.22))
                     .padding(.top, 28)
 
-                Text("Daily Chengyu")
+                Text("Daily-Chengyu")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.ink)
                     .padding(.top, 16)

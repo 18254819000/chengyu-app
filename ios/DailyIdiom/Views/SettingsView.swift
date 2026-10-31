@@ -55,7 +55,7 @@ struct SettingsView: View {
                     rowContent(icon: "square.grid.2x2.fill", iconColor: .teal, title: L("Add Widget to Home Screen"), trailing: nil)
                 }
             }
-            Section(header: Text(L("ABOUT")), footer: Text(String(format: L("Daily Chengyu · Version %@"), AppConfig.appVersion))) {
+            Section(header: Text(L("ABOUT")), footer: Text(String(format: L("Daily-Chengyu · Version %@"), AppConfig.appVersion))) {
                 actionRow(icon: "lock.fill", iconColor: .blue, L("Privacy Policy")) {
                     state.openWeb(AppConfig.privacyPolicyURL)
                 }
@@ -70,7 +70,7 @@ struct SettingsView: View {
                 NavigationLink {
                     AboutView()
                 } label: {
-                    rowContent(icon: "info.circle.fill", iconColor: .gray, title: L("About Daily Chengyu"), trailing: nil)
+                    rowContent(icon: "info.circle.fill", iconColor: .gray, title: L("About Daily-Chengyu"), trailing: nil)
                 }
             }
         }

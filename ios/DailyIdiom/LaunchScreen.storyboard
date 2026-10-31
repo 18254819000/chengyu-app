@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Launch Screen：静态开场，与应用内欢迎页 SplashView 同款式（纸面底 + AppLogo 图 + 品牌字标 + 标语），系统启动时先显示它，App 就绪后 SplashView 以同一画面接续，中间不再闪一下别的画面。注意：启动页不能跑代码，标语只能放英文；中文用户进 App 后 SplashView 的标语会切成中文（位置不变）。-->
+        <scene sceneID="tne-QT-ifU">
+            <objects>
+                <viewController id="BYZ-38-t0r" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cnt-aa-001">
+                                <rect key="frame" x="0.0" y="300" width="393" height="252"/>
+                                <subviews>
+                                    <imageView clipsToBounds="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" image="AppLogo" translatesAutoresizingMaskIntoConstraints="NO" id="Img-lg-001">
+                                        <rect key="frame" x="122" y="0.0" width="148" height="148"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <real key="value" value="32.56"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="148" id="Img-w-001"/>
+                                            <constraint firstAttribute="height" constant="148" id="Img-h-001"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Daily-Chengyu" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lbl-nm-001">
+                                        <rect key="frame" x="0.0" y="170" width="393" height="29"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                        <color key="textColor" red="0.13725490196078433" green="0.15294117647058825" blue="0.16862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="One idiom a day, wisdom for a lifetime." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lbl-tg-001">
+                                        <rect key="frame" x="48" y="209" width="297" height="43"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <color key="textColor" red="0.36078431372549019" green="0.38823529411764707" blue="0.41960784313725491" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Img-lg-001" firstAttribute="top" secondItem="Cnt-aa-001" secondAttribute="top" id="C-01"/>
+                                    <constraint firstItem="Img-lg-001" firstAttribute="centerX" secondItem="Cnt-aa-001" secondAttribute="centerX" id="C-02"/>
+                                    <constraint firstItem="Lbl-nm-001" firstAttribute="top" secondItem="Img-lg-001" secondAttribute="bottom" constant="22" id="C-03"/>
+                                    <constraint firstItem="Lbl-nm-001" firstAttribute="centerX" secondItem="Cnt-aa-001" secondAttribute="centerX" id="C-04"/>
+                                    <constraint firstItem="Lbl-tg-001" firstAttribute="top" secondItem="Lbl-nm-001" secondAttribute="bottom" constant="10" id="C-05"/>
+                                    <constraint firstItem="Lbl-tg-001" firstAttribute="leading" secondItem="Cnt-aa-001" secondAttribute="leading" constant="48" id="C-06"/>
+                                    <constraint firstItem="Lbl-tg-001" firstAttribute="trailing" secondItem="Cnt-aa-001" secondAttribute="trailing" constant="-48" id="C-07"/>
+                                    <constraint firstAttribute="bottom" secondItem="Lbl-tg-001" secondAttribute="bottom" id="C-08"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" name="LaunchBackground"/>
+                        <constraints>
+                            <constraint firstItem="Cnt-aa-001" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="R-01"/>
+                            <constraint firstItem="Cnt-aa-001" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="R-02"/>
+                            <constraint firstItem="Cnt-aa-001" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="R-03"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="0.0" y="0.0"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="AppLogo" width="1024" height="1024"/>
+        <namedColor name="LaunchBackground">
+            <color red="0.98000000000000004" green="0.97299999999999998" blue="0.95700000000000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
