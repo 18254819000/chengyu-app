@@ -15,8 +15,8 @@ enum AppConfig {
     static let urlScheme = "dailyidiom"
 
     /// 后台未配置商品 ID 时的兜底值，与 App Store Connect 中创建的自动续期订阅商品 ID 保持一致
-    static let defaultMonthlyProductID = "com.mengma.dailyidiom.monthly"
-    static let defaultYearlyProductID = "com.mengma.dailyidiom.yearly"
+    static let defaultMonthlyProductID = "com.mengma.chengyu.monthly"
+    static let defaultYearlyProductID = "com.mengma.chengyu.yearly"
 
     // 隐私政策 / 用户协议：由后端公开页提供，内容在管理端「协议与政策」中维护
     static let privacyPolicyURL = URL(string: "https://chengyu-backend.onrender.com/pages/privacy")!
