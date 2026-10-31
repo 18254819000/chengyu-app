@@ -16,14 +16,13 @@ struct SplashView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 148, height: 148)
-                    .clipShape(RoundedRectangle(cornerRadius: 148 * 0.22))
 
                 Text("Daily-Chengyu")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.ink)
                     .padding(.top, 22)
 
-                Text(L("One idiom a day, wisdom for a lifetime."))
+                Text(L("One idiom every day, and it's so easy!"))
                     .font(.system(size: 15))
                     .foregroundColor(.ink2)
                     .multilineTextAlignment(.center)

@@ -48,21 +48,34 @@ final class GameCenterManager: NSObject, ObservableObject, GKGameCenterControlle
 
     private var authViewPresented = false
 
+    /// 系统弹不出登录框时（未登录且系统不再重弹），榜单页用它弹手动登录提示。
+    @Published var showManualSignInHint = false
+
     // MARK: 认证
 
-    func authenticate() {
+    /// manual = true 仅用于用户主动点的登录/查看入口：系统给不出登录框时
+    /// 改弹手动提示，而不是像以前那样静默无反应。
+    func authenticate(manual: Bool = false) {
         GKLocalPlayer.local.authenticateHandler = { [weak self] vc, error in
             guard let self = self else { return }
             Task { @MainActor in
                 if let vc = vc, !self.authViewPresented {
                     self.authViewPresented = true
-                    self.present(vc)
+                    if !self.present(vc), manual {
+                        self.showManualSignInHint = true
+                    }
                 } else if GKLocalPlayer.local.isAuthenticated {
                     self.isAuthenticated = true
                     self.localPlayerName = GKLocalPlayer.local.displayName
                     self.flushPending()
                 } else if let error = error {
                     print("[GameCenter] auth failed: \(error.localizedDescription)")
+                    if manual {
+                        self.showManualSignInHint = true
+                    }
+                } else if manual {
+                    // 无登录框、无错误、未登录：系统不会再弹框，改手动提示。
+                    self.showManualSignInHint = true
                 }
             }
         }
@@ -71,16 +84,20 @@ final class GameCenterManager: NSObject, ObservableObject, GKGameCenterControlle
     /// 用户在榜单页点「登录」时调用：允许再次弹出系统登录（认证弹窗只弹一次，拒绝后需手动重试）
     func retryAuthentication() {
         authViewPresented = false
-        authenticate()
+        authenticate(manual: true)
     }
 
-    private func present(_ vc: UIViewController) {
+    /// 返回是否成功弹出；已在展示 Game Center 面板时不再重复弹。
+    @discardableResult
+    private func present(_ vc: UIViewController) -> Bool {
         guard let scene = UIApplication.shared.connectedScenes
             .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-              let root = scene.keyWindow?.rootViewController else { return }
+              let root = scene.keyWindow?.rootViewController else { return false }
         var top = root
         while let presented = top.presentedViewController { top = presented }
+        if top is GKGameCenterViewController { return false }
         top.present(vc, animated: true)
+        return true
     }
 
     // MARK: 上报（结算点调用，幂等：重复提交同一最好成绩无害）
@@ -244,6 +261,11 @@ final class GameCenterManager: NSObject, ObservableObject, GKGameCenterControlle
     // MARK: 系统面板（次要入口）
 
     func presentGameCenter(state: GKGameCenterViewControllerState) {
+        guard isAuthenticated else {
+            // 未登录时系统面板加载不出来：先走登录流程，弹不出再给手动提示。
+            retryAuthentication()
+            return
+        }
         let vc = GKGameCenterViewController()
         vc.viewState = state
         vc.gameCenterDelegate = self

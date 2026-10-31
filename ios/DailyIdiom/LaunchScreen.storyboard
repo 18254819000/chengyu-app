@@ -22,11 +22,6 @@
                                 <subviews>
                                     <imageView clipsToBounds="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" image="AppLogo" translatesAutoresizingMaskIntoConstraints="NO" id="Img-lg-001">
                                         <rect key="frame" x="122" y="0.0" width="148" height="148"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <real key="value" value="32.56"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="148" id="Img-w-001"/>
                                             <constraint firstAttribute="height" constant="148" id="Img-h-001"/>
@@ -38,7 +33,7 @@
                                         <color key="textColor" red="0.13725490196078433" green="0.15294117647058825" blue="0.16862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="One idiom a day, wisdom for a lifetime." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lbl-tg-001">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="One idiom every day, and it's so easy!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lbl-tg-001">
                                         <rect key="frame" x="48" y="209" width="297" height="43"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <color key="textColor" red="0.36078431372549019" green="0.38823529411764707" blue="0.41960784313725491" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

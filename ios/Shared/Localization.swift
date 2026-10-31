@@ -299,4 +299,9 @@ private let zhStrings: [String: String] = [
     "Full marks in all three quiz difficulties": "测验三档难度各得满分一次",
     "Comeback": "卷土重来",
     "7-day streak after a broken streak": "断签后重新连续打卡 7 天",
+
+    // MARK: - 启动标语 / Game Center 手动登录提示
+    "One idiom every day, and it's so easy!": "每天一个成语，就是这么简单！",
+    "Please sign in to Game Center": "请先登录 Game Center",
+    "Open Settings → Game Center and sign in with your Apple ID, then return to the app and try again.": "请到 iOS「设置 → Game Center」登录你的 Apple ID，然后回到 App 再试一次。",
 ]

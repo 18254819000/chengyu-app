@@ -89,9 +89,6 @@ struct LearnView: View {
                 } label: {
                     TopBarIconLabel(systemName: "doc.text.magnifyingglass")
                 }
-                NavigationLink(destination: QuizView(), isActive: $state.showQuiz) {
-                    EmptyView()
-                }
                 NavigationLink(destination: AllIdiomsView(), isActive: $state.showAllList) {
                     TopBarIconLabel(systemName: "list.bullet")
                 }
@@ -104,14 +101,23 @@ struct LearnView: View {
                 NavigationLink(destination: settingsDestination, isActive: $state.showSettings) {
                     TopBarIconLabel(systemName: "person.crop.circle")
                 }
+            }
+        }
+        .padding(.horizontal, 26)
+        .padding(.top, 14)
+        // 空标签链接（isActive 驱动）放 background：不占布局，避免 HStack 间距
+        // 把空视图也算一个间距，导致第一个按钮和第二个按钮间距翻倍。
+        .background {
+            Group {
+                NavigationLink(destination: QuizView(), isActive: $state.showQuiz) {
+                    EmptyView()
+                }
                 // 小组件引导页：首次安装小组件提示的主按钮驱动（空标签链接，isActive 驱动）
                 NavigationLink(destination: WidgetGuideView(), isActive: $state.showWidgetGuide) {
                     EmptyView()
                 }
             }
         }
-        .padding(.horizontal, 26)
-        .padding(.top, 14)
     }
 
     /// 打卡 pill（设计稿样式：浅红底、朱红字、胶囊形、左对齐，顶栏下方 16pt 间距）：

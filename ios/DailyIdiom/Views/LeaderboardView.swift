@@ -97,6 +97,15 @@ struct LeaderboardView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task(id: board) { await load() }
         .task(id: timeScope) { await load() }
+        .alert(L("Please sign in to Game Center"), isPresented: Binding(
+            get: { state.gameCenter.showManualSignInHint },
+            set: { state.gameCenter.showManualSignInHint = $0 }
+        )) {
+            Button(L("Try Again")) { state.gameCenter.retryAuthentication() }
+            Button(L("OK"), role: .cancel) {}
+        } message: {
+            Text(L("Open Settings → Game Center and sign in with your Apple ID, then return to the app and try again."))
+        }
     }
 
     // MARK: 榜单切换

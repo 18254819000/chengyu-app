@@ -83,22 +83,24 @@ struct ReviewView: View {
                     .lineSpacing(4)
             } else {
                 ForEach(mistakes, id: \.id) { item in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(item.idiom.idiom)
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.ink)
-                            Text(String(format: L("Missed %d× · last missed %@"), item.info.wrongCount, item.info.lastWrong))
-                                .font(.system(size: 12.5))
-                                .foregroundColor(.ink3)
-                        }
-                        Spacer()
-                        NavigationLink(destination: IdiomDetailPushView(idiom: item.idiom)) {
+                    NavigationLink(destination: IdiomDetailPushView(idiom: item.idiom)) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(item.idiom.idiom)
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundColor(.ink)
+                                Text(String(format: L("Missed %d× · last missed %@"), item.info.wrongCount, item.info.lastWrong))
+                                    .font(.system(size: 12.5))
+                                    .foregroundColor(.ink3)
+                            }
+                            Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.ink3)
                         }
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                     .padding(.vertical, 10)
                     Divider()
                 }
