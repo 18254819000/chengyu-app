@@ -27,6 +27,11 @@ final class AppState: ObservableObject {
     @Published var showWidgetGuide = false
     /// 首次安装小组件提示弹窗是否呈现（只弹一次，见 LocalStore.hasSeenWidgetPrompt）
     @Published var showWidgetPrompt = false
+    /// 强制更新弹窗是否呈现：开关开着、当前版本低于后端最低版本、商店链接非空时才为 true；
+    /// 其他情况（开关关、拉取失败、链接空）一律 false，正常使用。
+    @Published var showForceUpdate = false
+    /// 强制更新弹窗按钮跳转的商店链接（与 showForceUpdate 同步设置/清除）
+    var forceUpdateStoreURL: URL?
     @Published var newIdiomIds: Set<Int> = []
     @Published var pendingNewCount: Int = 0
     @Published var showNewIdiomsAlert = false
@@ -52,6 +57,35 @@ final class AppState: ObservableObject {
 
     init() {
         store.appState = self
+    }
+
+    // MARK: 强制更新
+
+    private func evaluateForceUpdate() {
+        guard let cfg = config,
+              cfg.forceUpdateEnabled == true,
+              let minimum = cfg.minimumVersion,
+              let storeString = cfg.storeUrl, !storeString.isEmpty,
+              let url = URL(string: storeString),
+              Self.isVersion(AppConfig.appVersion, olderThan: minimum) else {
+            showForceUpdate = false
+            forceUpdateStoreURL = nil
+            return
+        }
+        forceUpdateStoreURL = url
+        showForceUpdate = true
+    }
+
+    /// 逐段数字比较版本号，段数不同时缺失段按 0 算（"1.0" 等于 "1.0.0"）。
+    static func isVersion(_ current: String, olderThan minimum: String) -> Bool {
+        let a = current.split(separator: ".").map { Int($0) ?? 0 }
+        let b = minimum.split(separator: ".").map { Int($0) ?? 0 }
+        for i in 0..<max(a.count, b.count) {
+            let x = i < a.count ? a[i] : 0
+            let y = i < b.count ? b[i] : 0
+            if x != y { return x < y }
+        }
+        return false
     }
 
     // MARK: 派生状态
@@ -180,6 +214,9 @@ final class AppState: ObservableObject {
             let cfg = try await api.fetchConfig()
             let isFirstSync = !LocalStore.hasCompletedFirstSync
             config = cfg
+            // 强制更新判断紧跟 config：开关、最低版本、商店链接三者齐全且版本过低时才弹，
+            // 同步失败走 catch 时不碰开关（沿用上次判断结果，离线不挡路）
+            evaluateForceUpdate()
             // 商品 ID 以后台配置为准，拿到 config 后按最新 ID 刷新商品（启动时先用默认 ID 拉过一次）
             await store.loadProducts()
 

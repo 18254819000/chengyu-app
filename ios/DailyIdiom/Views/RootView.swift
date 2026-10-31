@@ -6,6 +6,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var state: AppState
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
 
     /// 应用内欢迎页（SplashView）是否呈现：冷启动时为 true，约 1.6 秒后由定时器置 false 淡出。
     /// 只在本视图首次出现时调度一次，从后台切回前台不会重新出现。
@@ -108,6 +109,19 @@ struct RootView: View {
             secondaryAction: {
                 state.showWidgetPrompt = false
                 LocalStore.hasSeenWidgetPrompt = true
+            }
+        )
+        .appDialog(
+            isPresented: $state.showForceUpdate,
+            title: "Update Required",
+            message: "This version is too old to continue. Please update to the latest version.",
+            primaryTitle: "Update on the App Store",
+            primaryAction: {
+                // 单按钮、无次按钮、遮罩不可点消：不更新就一直挡着；
+                // 跳商店后回 App 若仍是旧版本，弹窗仍在；升到新版本后同步判断自动清除。
+                if let url = state.forceUpdateStoreURL {
+                    openURL(url)
+                }
             }
         )
         .sheet(isPresented: Binding(

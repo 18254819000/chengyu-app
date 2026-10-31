@@ -204,17 +204,24 @@ struct DailyWeekResponse: Codable {
 }
 
 /// GET /config 响应。商品 ID 后台未配置时为空字符串，客户端回退到 AppConfig 的默认商品 ID。
+/// 强制更新三个字段为可选：老后端不下发时全部为 nil，App 按“不强制”处理，前后兼容。
 struct AppConfigResponse: Codable, Equatable {
     let freeCount: Int
     let monthlyProductId: String
     let yearlyProductId: String
     let contentVersion: Int
+    let minimumVersion: String?
+    let forceUpdateEnabled: Bool?
+    let storeUrl: String?
 
     enum CodingKeys: String, CodingKey {
         case freeCount = "free_count"
         case monthlyProductId = "monthly_product_id"
         case yearlyProductId = "yearly_product_id"
         case contentVersion = "content_version"
+        case minimumVersion = "minimum_version"
+        case forceUpdateEnabled = "force_update_enabled"
+        case storeUrl = "store_url"
     }
 }
 
