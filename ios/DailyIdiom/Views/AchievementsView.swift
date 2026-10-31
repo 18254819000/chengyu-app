@@ -48,10 +48,10 @@ struct AchievementsView: View {
                     .foregroundColor(unlocked ? .white : .ink3)
             }
             VStack(alignment: .leading, spacing: 4) {
-                Text(def.title)
+                Text(L(def.title))
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(.ink)
-                Text(def.desc)
+                Text(L(def.desc))
                     .font(.system(size: 13))
                     .foregroundColor(.ink2)
                 if !unlocked {

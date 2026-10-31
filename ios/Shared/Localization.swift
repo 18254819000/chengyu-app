@@ -273,4 +273,30 @@ private let zhStrings: [String: String] = [
 
     // MARK: - 小组件
     "A new Chinese idiom every day": "每天一个新成语",
+
+    // MARK: - 成就（Game Center 成就页标题与描述）
+    "First Game": "初试身手",
+    "Finish your first round": "完成第一局游戏（测验或看图猜）",
+    "Sharp Eye": "火眼金睛",
+    "10 correct in a row in Picture Guess": "看图猜连对 10 题",
+    "Perfect Round": "百发百中",
+    "A flawless 10/10 regular round": "常规模式一局全对（10/10）",
+    "Marathon": "连答达人",
+    "25 correct in a row in Endless mode": "连答模式单次连对 25 题",
+    "Week Warrior": "一周坚持",
+    "7-day check-in streak": "连续打卡 7 天",
+    "Month Master": "一月坚持",
+    "30-day check-in streak": "连续打卡 30 天",
+    "Century Streak": "百日坚持",
+    "100-day check-in streak": "连续打卡 100 天",
+    "Century Scholar": "学富五车",
+    "Learn 100 idioms": "累计学习 100 条不同成语",
+    "Storyteller": "故事达人",
+    "Read 20 idiom stories": "读完 20 个不同成语故事",
+    "Diligent Reviewer": "温故知新",
+    "Complete 100 review judgments": "累计完成 100 次复习判定",
+    "Quiz Master": "测试全才",
+    "Full marks in all three quiz difficulties": "测验三档难度各得满分一次",
+    "Comeback": "卷土重来",
+    "7-day streak after a broken streak": "断签后重新连续打卡 7 天",
 ]
